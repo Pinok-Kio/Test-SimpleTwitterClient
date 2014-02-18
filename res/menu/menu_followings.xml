@@ -7,11 +7,7 @@
 				android:title="@string/text_send_message"
 				android:showAsAction="always"
 				android:icon="@drawable/ic_action_edit"/>
-		<item
-				android:id="@+id/menu_item_show_timeline"
-				android:title="@string/text_show_tweets"
-				android:showAsAction="always"
-				android:icon="@drawable/red_square"/>
+
 		<item
 				android:id="@+id/menu_item_unfollow"
 				android:title="@string/text_unfollow"

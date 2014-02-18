@@ -32,6 +32,7 @@
 	<string name="text_show_tweets">Tweets</string>
 	<string name="text_remove_tweet">Remove tweet</string>
 	<string name="text_information">User info</string>
+	<string name="text_content_description">User avatar image</string>
 
 	<string name="pref_image_loading">Allow loading images</string>
 	<string name="pref_image_loading_summary">Loading images like user avatars automatically</string>
