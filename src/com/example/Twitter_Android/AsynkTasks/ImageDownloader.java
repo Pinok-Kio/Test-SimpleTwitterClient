@@ -24,7 +24,6 @@ import java.lang.ref.WeakReference;
 
 public class ImageDownloader {
 	private static final DataCache cache = DataCache.getInstance();
-	private int s = 0;
 	//------------------------------------------------------------------------------------------------------------------
 	private class BitmapDownloaderTask extends AsyncTask<String, Void, Bitmap> {
 		private String url;
@@ -183,7 +182,7 @@ public class ImageDownloader {
 		int bitmapWidth = bitmap.getWidth();
 		int bitmapHeight = bitmap.getHeight();
 //		System.out.println("bitmapWidth = " + bitmapWidth + "   bitmapHeight = " + bitmapHeight);
-		final int MAX_DIMENSION = cache.getMaxBitmapDimension();
+		final int MAX_DIMENSION = cache.getScreenWidth();
 
 		if (bitmapHeight > MAX_DIMENSION) {
 			float scale = (float) MAX_DIMENSION / (float) bitmapHeight;
