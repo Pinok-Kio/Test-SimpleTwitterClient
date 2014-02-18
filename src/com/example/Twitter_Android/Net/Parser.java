@@ -41,7 +41,8 @@ class Parser {
 	 * @throws ParseException если строка некорректная или null.
 	 */
 	@SuppressWarnings("unchecked")
-	public List<Tweet> getTweets(String str) throws ParseException {
+	public synchronized List<Tweet> getTweets(String str) throws ParseException {
+		System.out.println(str);
 		Object parsedString = parser.parse(str);
 		JSONArray jsonArray = (JSONArray) parsedString;
 		List<Tweet> tweets = new ArrayList<>();
@@ -67,7 +68,7 @@ class Parser {
 	 * @param object JSONObject для разбора.
 	 * @return твит.
 	 */
-	private Tweet getSingleTweet(JSONObject object) {
+	private synchronized Tweet getSingleTweet(JSONObject object) {
 		JSONObject user = (JSONObject) object.get("user");
 		Person person = getPerson(user);
 		String text = (String) object.get("text");
@@ -85,7 +86,7 @@ class Parser {
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
-	public Tweet getSingleTweet(String str) throws ParseException {
+	public synchronized Tweet getSingleTweet(String str) throws ParseException {
 		return getSingleTweet((JSONObject) parser.parse(str));
 	}
 	//------------------------------------------------------------------------------------------------------------------
@@ -97,7 +98,7 @@ class Parser {
 	 * @return next_cursor value
 	 * @throws ParseException incorrect or null string
 	 */
-	public long getNextCursor(String str) throws ParseException {
+	public synchronized long getNextCursor(String str) throws ParseException {
 		JSONObject parsedString = (JSONObject) parser.parse(str);
 		return (long) parsedString.get("next_cursor");
 	}
@@ -110,14 +111,14 @@ class Parser {
 	 * @return список твитов.
 	 * @throws ParseException если строка некорректная или null.
 	 */
-	public List<Tweet> getSearchedTweets(String str) throws ParseException {
+	public synchronized List<Tweet> getSearchedTweets(String str) throws ParseException {
 		Object parsedString = parser.parse(str);
 		JSONObject array = (JSONObject) parsedString;
 		JSONArray jsonArray = (JSONArray) array.get("statuses");
 		return getTweets(jsonArray.toJSONString());
 	}
 
-	public List<Person> getSearchedUsers(String str) throws ParseException {
+	public synchronized List<Person> getSearchedUsers(String str) throws ParseException {
 		Object parsedString = parser.parse(str);
 		JSONArray array = (JSONArray) parsedString;
 		List<Person> result = new ArrayList<>();
@@ -129,13 +130,13 @@ class Parser {
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
-	public Person getPerson(String str) throws ParseException {
+	public synchronized Person getPerson(String str) throws ParseException {
 		Object parsedString = parser.parse(str);
 		JSONObject data = (JSONObject) parsedString;
 		return getPerson(data);
 	}
 
-	private Person getPerson(JSONObject person) {
+	private synchronized Person getPerson(JSONObject person) {
 		String name = (String) person.get("name");
 		String profileImage = (String) person.get("profile_image_url_https");
 		String location = (String) person.get("location");
@@ -153,7 +154,7 @@ class Parser {
 	 * @param object JSONObject для разбора.
 	 * @return строковое представление даты.
 	 */
-	private String getCreationDate(JSONObject object) throws java.text.ParseException {
+	private synchronized String getCreationDate(JSONObject object) throws java.text.ParseException {
 		String date = (String) object.get("created_at");
 		return formattedDate.format(incomingDate.parse(date));
 	}
@@ -166,7 +167,7 @@ class Parser {
 	 * @return массив тэгов.
 	 */
 	@SuppressWarnings("unchecked")
-	private String[] getTags(JSONObject object) {
+	private synchronized String[] getTags(JSONObject object) {
 		JSONObject entities = (JSONObject) object.get("entities");
 		JSONArray jsonHashTags = (JSONArray) entities.get("hashtags");
 		String[] tags = new String[jsonHashTags.size()];
@@ -185,7 +186,7 @@ class Parser {
 	 * @return массив ссылок (как строки)
 	 */
 	@SuppressWarnings("unchecked")
-	private String[] getMedia(JSONObject object) {
+	private synchronized String[] getMedia(JSONObject object) {
 		JSONObject entities = (JSONObject) object.get("entities");
 		JSONArray jsonMedia = (JSONArray) entities.get("media");
 		if (jsonMedia != null) {
@@ -208,7 +209,7 @@ class Parser {
 	 * @return отображаемое имя пользователя.
 	 * @throws ParseException
 	 */
-	public String getUserScreenName(String str) throws ParseException {
+	public synchronized String getUserScreenName(String str) throws ParseException {
 		Object parsedString = parser.parse(str);
 		JSONObject object = (JSONObject) parsedString;
 		return (String) object.get("screen_name");
@@ -222,7 +223,7 @@ class Parser {
 	 * @return список друзей пользователя.
 	 * @throws ParseException
 	 */
-	public List<Person> getFriends(String str) throws ParseException {
+	public synchronized List<Person> getFriends(String str) throws ParseException {
 		List<Person> friends = new ArrayList<>();
 		Object parsedString = parser.parse(str);
 		JSONObject object = (JSONObject) parsedString;
@@ -243,7 +244,7 @@ class Parser {
 		return (boolean) targetFriend.get("followed_by");
 	}
 
-	public List<Message> getMessages(String str) throws ParseException, java.text.ParseException {
+	public synchronized List<Message> getMessages(String str) throws ParseException, java.text.ParseException {
 		JSONArray jsonArray = (JSONArray) parser.parse(str);
 		List<Message> result = new ArrayList<>();
 		for (JSONObject arrayValue : (Iterable<JSONObject>) jsonArray) {

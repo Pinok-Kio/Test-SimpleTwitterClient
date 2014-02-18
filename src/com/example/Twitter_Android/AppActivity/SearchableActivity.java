@@ -20,11 +20,11 @@ import com.example.Twitter_Android.R;
 
 import java.util.List;
 
-class SearchableActivity extends ListActivity implements LoaderManager.LoaderCallbacks {
+public class SearchableActivity extends ListActivity implements LoaderManager.LoaderCallbacks {
 	private static final String ADAPTER_TAG = "SEARCH_ACTIVITY";
 	private static final int TWEETS_LOADER = Constants.SEARCH_RESULT_LOADER;
 	private static final int USERS_LOADER = Constants.SEARCH_USERS_LOADER;
-	private final String QUERY = "QUERY";
+	private static final String QUERY = "QUERY";
 
 
 	private TweetAdapter tweetAdapter;

@@ -6,17 +6,22 @@ import com.example.Twitter_Android.Logic.Tweet;
 import com.mass.cmassive.CMassive;
 
 import java.util.List;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Абстрактный адаптер для отображения списка твитов или пользователей (и сообщений).
  * Позволяет добавлять новый данные взамен текущих, в начало или в конец и удалять данные.
+ *
  * @param <T> тип содержимого - используется Tweet, Person
  */
 public abstract class TimelineAdapter<T> extends BaseAdapter {
 	private CMassive<T> items;
-	private long maxID = -1;    //см. max_id и since_id в TwitterAPI
+	private long maxID = -1;    //see max_id & since_id in TwitterAPI
 	private long sinceID = -1;
 	private final String TAG;
+	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+	private final Lock writeLock = lock.writeLock();
 
 	@SuppressWarnings("unchecked")
 	TimelineAdapter(List<? extends T> newItems, String tag) {
@@ -75,7 +80,12 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 	public void addItemsToTop(List<? extends T> newItems) {
 		T[] tmp = (T[]) new Object[newItems.size()];
 		tmp = newItems.toArray(tmp);
-		items.insertToStart(tmp);
+		writeLock.tryLock();
+		try {
+			items.insertToStart(tmp);
+		} finally {
+			writeLock.unlock();
+		}
 		if (newItems.get(0) instanceof Tweet) {
 			sinceID = ((Tweet) items.getItem(0)).getID() + 1;
 		}
@@ -91,9 +101,14 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 	public void addItemsToBottom(List<? extends T> newItems) {
 		T[] tmp = (T[]) new Object[newItems.size()];
 		tmp = newItems.toArray(tmp);
-		items.insertToEnd(tmp);
+		writeLock.tryLock();
+		try {
+			items.insertToEnd(tmp);
+		} finally {
+			writeLock.unlock();
+		}
 		if (newItems.get(0) instanceof Tweet) {
-			maxID = ((Tweet) items.getItem(items.getDataSize()-1)).getID() - 1;
+			maxID = ((Tweet) items.getItem(items.getDataSize() - 1)).getID() - 1;
 		}
 		notifyDataSetChanged();
 	}
@@ -131,6 +146,7 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 		items.updateItem(tweet, 0);
 		notifyDataSetChanged();
 	}
+
 	//------------------------------------------------------------------------------------------------------------------
 	public long getMaxID() {
 		return maxID;

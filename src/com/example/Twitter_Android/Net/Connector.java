@@ -47,9 +47,9 @@ public class Connector {
 	}
 
 	/**
-	 * Авторизация приложения.
+	 * App authorization.
 	 *
-	 * @param code код авторизации со страницы авторизации приложения.
+	 * @param code auth code from twitter auth page.
 	 */
 	public Token authorize(String code) {
 		final Verifier v = new Verifier(code);
@@ -64,14 +64,13 @@ public class Connector {
 	//------------------------------CONNECTED USER----------------------------------------------------------------------
 
 	/**
-	 * Получить настройки аккаунта подключенного пользователя.
-	 * Используется для получения screen_name пользователя.
+	 * Getting connected user screen name.
+	 * Using for getting information about connected user.
 	 *
 	 * @return screen_name пользователя.
 	 * @throws ParseException
 	 */
 	private String getConnectedUserScreenName() throws ParseException {
-		System.out.println("Getting account settings");
 		final String address = "https://api.twitter.com/1.1/account/settings.json";
 		Response response = connectGet(address);
 		return parser.getUserScreenName(response.getBody());
@@ -91,12 +90,10 @@ public class Connector {
 	}
 
 	/**
-	 * Определяет, являются ли два пользователя друзьями.
-	 *
-	 * @param firstUserID  ID первого пользователя
-	 * @param secondUserID ID второго пользователя
-	 * @return true - друзья, false - не друзья
-	 * @throws ParseException когда есть несуществующий ID
+	 * @param firstUserID  first user ID
+	 * @param secondUserID second user ID
+	 * @return true - friends, false - not friends
+	 * @throws ParseException incorrect ID
 	 */
 	public boolean isThisUserFriends(long firstUserID, long secondUserID) throws ParseException {
 		String address = "https://api.twitter.com/1.1/friendships/show.json?source_id=" + firstUserID + "&target_id=" + secondUserID;
@@ -108,16 +105,16 @@ public class Connector {
 	//------------------------------FOLLOWINGS--------------------------------------------------------------------------
 
 	/**
-	 * Получение друзей (followings) пользователя порциями по 50 штук.
+	 * Get friends (followings) of user specified by id.
 	 *
-	 * @param id   id пользователя, для которого нужно загрузить список друзей
-	 * @param crsr курсор (подробнее в апи твиттера)
-	 * @return список друзей пользователя.
-	 * @throws ParseException
+	 * @param id user id
+	 * @param crsr cursor (see twitter api)
+	 * @return list of followings
+	 * @throws ParseException incorrect data
 	 */
 	public List<Person> getFriends(long id, long crsr) throws ParseException {
-		System.out.println("Getting Friends");
-		String address = "https://api.twitter.com/1.1/friends/list.json?cursor=" + crsr + "&user_id=" + id + "&skip_status=true&include_user_entities=false&count=50";
+		String address = "https://api.twitter.com/1.1/friends/list.json?cursor=" + crsr
+				+ "&user_id=" + id + "&skip_status=true&include_user_entities=false&count=50";
 		Response response = connectGet(address);
 		cursor = parser.getNextCursor(response.getBody());
 		return parser.getFriends(response.getBody());
@@ -130,8 +127,7 @@ public class Connector {
 	//-------------------------------TIMELINES--------------------------------------------------------------------------
 
 	/**
-	 * Получить записи (твиты) с домашней страницы пользователя.
-	 * Получаем порциями по 50 штук.
+	 * Get statuses (tweets) from connected user homepage.
 	 *
 	 * @param max_id   id последнего полученного твита. Все вновь получаемые твиты будут старше
 	 *                 (т.е. созданы ранее) твита с указанным id

@@ -24,7 +24,6 @@ public class Person implements Comparable<Person> {
 	public String getName() {
 		return name;
 	}
-
 	//------------------------------------------------------------------------------------------------------------------
 
 	public String getScreenName() {
@@ -87,6 +86,7 @@ public class Person implements Comparable<Person> {
 				+ location.hashCode()
 				+ description.hashCode()
 				+ screenName.hashCode()
+				+ Boolean.valueOf(isFriend).hashCode()
 				+ Long.valueOf(ID).hashCode();
 	}
 

@@ -15,10 +15,7 @@ import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.SearchView;
-import android.widget.Toast;
+import android.widget.*;
 import com.example.Twitter_Android.Fragments.ConnectedUserTimelineFragment;
 import com.example.Twitter_Android.Fragments.Dialogs.ErrorDialog;
 import com.example.Twitter_Android.Fragments.FollowingsFragment;
@@ -42,7 +39,9 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends Activity implements ActionBar.TabListener {
 	private final Connector connector;
-	private Fragment currentFragment;   //Фрагмент, показываемый в данный момент.
+	//	private Fragment currentFragment;   //Фрагмент, показываемый в данный момент.
+	private int currentSelectedTab;
+	private int screenSize;
 
 	public MainActivity() {
 		connector = Connector.getInstance();
@@ -77,6 +76,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
 	/**
 	 * Button для авторизации из layout_enter_auth_code.xml
+	 *
 	 * @param v button
 	 * @throws ExecutionException
 	 * @throws InterruptedException
@@ -156,27 +156,32 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	 */
 	private void authorizationEnded() {
 		setContentView(R.layout.main_screen_layout);
-		setImageDimensions();
+		setScreenSize();
+		getMyUID();
 		setTabs();
 		startDataLoading();
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
 	/**
-	 * Define image sizes for images in ShowImageDialog.
+	 * Define max image sizes for showing images.
 	 * For high resolution screen will show images in higher resolution.
 	 */
-	private void setImageDimensions() {
+	private void setScreenSize() {
 		DataCache cache = DataCache.getInstance();
 		Display display = getWindowManager().getDefaultDisplay();
 		Point size = new Point();
 		display.getSize(size);
-		cache.setMaxBitmapDimension(size.x);
+		cache.setScreenWidth(size.x);
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
 	private void startDataLoading() {
-		getMyUID();
+		/*
+			Этот фрагмент показываем в любом случае.
+		 */
+		TimelineFragment fragment = HomeTimelineFragment.newInstance();
+		showFragment(fragment, HomeTimelineFragment.TAG);
 		/*
 			Если ландшафтное положение экрана - выбираем, что показывать, в зависимости от размеров экрана.
 			TODO: доделать экраны.
@@ -194,17 +199,13 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 					break;
 				case Configuration.SCREENLAYOUT_SIZE_XLARGE:
 					System.out.println("SCREENLAYOUT_SIZE_XLARGE");
+					screenSize = Configuration.SCREENLAYOUT_SIZE_XLARGE;
+					showMyTweets();
 					break;
 				default:
 					break;
 			}
 		}
-		/*
-			Этот фрагмент показываем в любом случае.
-		 */
-		TimelineFragment fragment = HomeTimelineFragment.newInstance();
-		showFragment(fragment, HomeTimelineFragment.TAG);
-
 	}
 
 	/**
@@ -318,38 +319,21 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	//------------------------------------------------------------------------------------------------------------------
 	private void setTabs() {
 		ActionBar aBar = getActionBar();
+		Configuration configuration = getResources().getConfiguration();
 		if (aBar != null) {
-			ActionBar.Tab tabHome = aBar.newTab().setText(R.string.menuitem_home_timeline).setTabListener(this);
+			switch (configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) {
+				case Configuration.SCREENLAYOUT_SIZE_NORMAL:
+					ActionBar.Tab tabHome = aBar.newTab().setText(R.string.menuitem_home_timeline).setTabListener(this);
+					aBar.addTab(tabHome);
+					break;
+			}
 			ActionBar.Tab tabFriends = aBar.newTab().setText(R.string.menuitem_friends).setTabListener(this);
 			ActionBar.Tab tabMyTweets = aBar.newTab().setText(R.string.menuitem_my_tweets).setTabListener(this);
-
-			aBar.addTab(tabHome);
 			aBar.addTab(tabFriends);
 			aBar.addTab(tabMyTweets);
 
 			aBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		}
-	}
-
-	@Override
-	public boolean onPrepareOptionsMenu(Menu menu) {
-		int selectedTab = getActionBar().getSelectedNavigationIndex();
-		int menuType = (selectedTab == 0) ? R.menu.menu_home_timeline : (selectedTab == 1) ? R.menu.menu_followings : R.menu.menu_my_tweets;
-		menu.clear();
-		getMenuInflater().inflate(menuType, menu);
-
-		if (menuType == R.menu.menu_home_timeline) {
-			SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
-			if (searchView == null) {
-				return false;
-			}
-
-			SearchManager searchManager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
-			ComponentName cn = new ComponentName(this, SearchableActivity.class);
-			SearchableInfo info = searchManager.getSearchableInfo(cn);
-			searchView.setSearchableInfo(info);
-		}
-		return super.onPrepareOptionsMenu(menu);
 	}
 
 	/*
@@ -392,23 +376,22 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		ft.setCustomAnimations(R.animator.aminator_appearance, R.animator.animator_disappear);
 
-		currentFragment = fragment;
 		//Основной фрагмент показываем всегда, дополнительный - в нужном месте.
 		if (tag.equals(HomeTimelineFragment.TAG)) {
 			ft.replace(R.id.frame_layout_timeline, fragment, tag);
+			ft.commit();
 		} else {
 			showFragmentInRightPlace(ft, fragment, tag);
 		}
-
-		ft.commit();
 	}
 
 	/**
 	 * В горизонтальном положении на большом экране будет несколько фрагментов.
 	 * Эта функция показывает доп. фрагмент в нужном месте.
-	 * @param ft FragmentTransaction
+	 *
+	 * @param ft       FragmentTransaction
 	 * @param fragment fragment to show
-	 * @param tag fragment tag
+	 * @param tag      fragment tag
 	 */
 	private void showFragmentInRightPlace(FragmentTransaction ft, Fragment fragment, String tag) {
 		switch (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) {
@@ -416,14 +399,19 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 				ft.replace(R.id.frame_layout_timeline, fragment, tag);
 				break;
 			case Configuration.SCREENLAYOUT_SIZE_LARGE:
-				ft.replace(R.id.frame_layout_for_different_fragments, fragment, tag);
+				ft.replace(R.id.frame_layout_other_fragments, fragment, tag);
+				break;
+			case Configuration.SCREENLAYOUT_SIZE_XLARGE:
+				ft.replace(R.id.frame_layout_other_fragments, fragment, tag);
 				break;
 		}
+		ft.commit();
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
 	private void showFriends() {
-		FollowingsFragment followingsFragment = (FollowingsFragment) getFragmentManager().findFragmentByTag(FollowingsFragment.TAG);
+		TimelineFragment followingsFragment =
+				(FollowingsFragment) getFragmentManager().findFragmentByTag(FollowingsFragment.TAG);
 		if (followingsFragment == null) {
 			followingsFragment = FollowingsFragment.getInstance();
 		}
@@ -432,13 +420,22 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	//------------------------------------------------------------------------------------------------------------------
 
 	private void showMyTweets() {
-		ConnectedUserTimelineFragment connectedUserTimelineFragment =
+		TimelineFragment myTweets =
 				(ConnectedUserTimelineFragment) getFragmentManager().findFragmentByTag(ConnectedUserTimelineFragment.TAG);
-		if (connectedUserTimelineFragment == null) {
-			connectedUserTimelineFragment = ConnectedUserTimelineFragment.newInstance();
+		if (myTweets == null) {
+			myTweets = ConnectedUserTimelineFragment.getInstance();
 		}
 
-		showFragment(connectedUserTimelineFragment, ConnectedUserTimelineFragment.TAG);
+		showFragment(myTweets, ConnectedUserTimelineFragment.TAG);
+	}
+
+	private void showHomeTimeline() {
+		TimelineFragment homeTimelineFragment =
+				(HomeTimelineFragment) getFragmentManager().findFragmentByTag(HomeTimelineFragment.TAG);
+		if (homeTimelineFragment == null) {
+			homeTimelineFragment = HomeTimelineFragment.newInstance();
+		}
+		showFragment(homeTimelineFragment, HomeTimelineFragment.TAG);
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -449,17 +446,21 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
 	@Override
 	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-		int tabPosition = tab.getPosition();
-		switch (tabPosition) {
+		currentSelectedTab = tab.getPosition();
+		switch (currentSelectedTab) {
 			case 0:
-				Fragment homeTimelineFragment = getFragmentManager().findFragmentByTag(HomeTimelineFragment.TAG);
-				if (homeTimelineFragment == null) {
-					homeTimelineFragment = HomeTimelineFragment.newInstance();
+				if (screenSize == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+					showHomeTimeline();
+				} else {
+					showFriends();
 				}
-				showFragment(homeTimelineFragment, HomeTimelineFragment.TAG);
 				break;
 			case 1:
-				showFriends();
+				if (screenSize == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+					showFriends();
+				} else {
+					showMyTweets();
+				}
 				break;
 			case 2:
 				showMyTweets();
@@ -472,15 +473,29 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
 	}
 
+	/*
+		Show first list element
+	 */
 	@Override
 	public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-		if (currentFragment != null && currentFragment instanceof ListFragment) {
-			/*
-				Раз currentFragment != null, значит listFragment уже существует и
-				getListView() должен вернуть ListView, а не NPE.
-			 */
-			((ListFragment) currentFragment).getListView().setSelection(0);
-		}
+//		TimelineFragment fragment = null;
+//		switch (currentSelectedTab) {
+//			case 0:
+//				fragment = (TimelineFragment) getFragmentManager().findFragmentByTag(HomeTimelineFragment.TAG);
+//				break;
+//			case 1:
+//				fragment = (TimelineFragment) getFragmentManager().findFragmentByTag(FollowingsFragment.TAG);
+//				break;
+//			case 2:
+//				fragment = (TimelineFragment) getFragmentManager().findFragmentByTag(ConnectedUserTimelineFragment.TAG);
+//				break;
+//		}
+//		if (fragment != null) {
+//			ListView lv = fragment.getListView();
+//			if (lv != null) {
+//				lv.setSelection(0);
+//			}
+//		}
 	}
 	//------------------------------------------------------------------------------------------------------------------
 

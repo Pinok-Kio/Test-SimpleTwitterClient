@@ -10,7 +10,6 @@ import java.nio.channels.FileChannel;
 
 public class FileWorker {
 	private static final String tokenFilename = "SavedAccessToken.bin";
-	private static final String dataFilename = "SavedData.bin";
 	private final Activity activity;
 	private Token accessToken = null;
 
@@ -30,7 +29,6 @@ public class FileWorker {
 				ByteBuffer buffer = ByteBuffer.allocateDirect((int) file.length());
 				read.read(buffer);
 				accessToken = (Token) new ObjectInputStream(new ByteArrayInputStream(buffer.array())).readObject();
-				System.out.println("FileWorker token = " + accessToken);
 				buffer.clear();
 				read.close();
 			} catch (FileNotFoundException e) {

@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,7 +14,7 @@ import com.example.Twitter_Android.AppActivity.ConcreteUserTimelineActivity;
 import com.example.Twitter_Android.AsynkTasks.TaskUnfollow;
 import com.example.Twitter_Android.Fragments.Adapters.TimelineAdapter;
 import com.example.Twitter_Android.Fragments.Adapters.FollowingsListAdapter;
-import com.example.Twitter_Android.Loaders.Task_LoadFollowings;
+import com.example.Twitter_Android.Loaders.FollowingsLoader;
 import com.example.Twitter_Android.Logic.Constants;
 import com.example.Twitter_Android.Logic.DataCache;
 import com.example.Twitter_Android.Logic.Person;
@@ -92,7 +94,7 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 	@Override
 	public Loader<List<? extends Person>> onCreateLoader(int id, Bundle args) {
 		if (id == FOLLOWINGS_LOADER) {
-			return new Task_LoadFollowings(getActivity(), nextCursor);
+			return new FollowingsLoader(getActivity(), nextCursor);
 		}
 		return null;
 	}
@@ -122,15 +124,18 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.menu_followings, menu);
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_item_send_message:
 				Toast.makeText(mainActivity, "FOLLOWINGS FRAGMENT Send message", Toast.LENGTH_LONG).show();
-				return true;
-
-			case R.id.menu_item_show_timeline:
-				Toast.makeText(mainActivity, "FOLLOWINGS FRAGMENT Show timeline", Toast.LENGTH_LONG).show();
 				return true;
 
 			case R.id.menu_item_unfollow:

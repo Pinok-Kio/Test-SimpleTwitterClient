@@ -12,7 +12,6 @@ public class Tweet {
 	private final long ID;
 	private final boolean hasMedia;
 	private final boolean hasLinkInText;
-	private boolean isSelected;
 
 	public Tweet(String text, String creationDate, String lang, String[] hashtags, Person person, String[] mediaUrl, long ID) {
 		this.text = text;
@@ -78,7 +77,6 @@ public class Tweet {
 		return ID == tweet.ID
 				&& hasLinkInText == tweet.hasLinkInText
 				&& hasMedia == tweet.hasMedia
-				&& isSelected == tweet.isSelected
 				&& !(creationDate != null ? !creationDate.equals(tweet.creationDate) : tweet.creationDate != null)
 				&& Arrays.equals(hashtags, tweet.hashtags)
 				&& !(lang != null ? !lang.equals(tweet.lang) : tweet.lang != null)
@@ -98,7 +96,6 @@ public class Tweet {
 		result = 31 * result + (int) (ID ^ (ID >>> 32));
 		result = 31 * result + (hasMedia ? 1 : 0);
 		result = 31 * result + (hasLinkInText ? 1 : 0);
-		result = 31 * result + (isSelected ? 1 : 0);
 		return result;
 	}
 }

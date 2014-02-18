@@ -9,12 +9,12 @@ import org.json.simple.parser.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Task_LoadFollowings extends TweetLoader<Person> {
+public class FollowingsLoader extends TweetLoader<Person> {
 	private final Connector connector;
 	private final long cursor;
 
 	//------------------------------------------------------------------------------------------------------------------
-	public Task_LoadFollowings(Context context, long cursor) {
+	public FollowingsLoader(Context context, long cursor) {
 		super(context);
 		connector = Connector.getInstance();
 		this.cursor = cursor;

@@ -10,12 +10,12 @@ import android.widget.AdapterView;
 import android.widget.ImageView;
 import com.example.Twitter_Android.AsynkTasks.ImageDownloader;
 import com.example.Twitter_Android.Fragments.Dialogs.UserInfoDialog;
+import com.example.Twitter_Android.Loaders.UserTimelineLoader;
 import com.example.Twitter_Android.Logic.Constants;
 import com.example.Twitter_Android.Logic.DataCache;
 import com.example.Twitter_Android.Fragments.Adapters.TimelineAdapter;
 import com.example.Twitter_Android.Fragments.Adapters.ConcreteUserTimelineAdapter;
 import com.example.Twitter_Android.Fragments.Dialogs.DirectMessageDialog;
-import com.example.Twitter_Android.Loaders.Task_LoadUserTimeline;
 import com.example.Twitter_Android.Logic.Person;
 import com.example.Twitter_Android.Logic.Tweet;
 import com.example.Twitter_Android.R;
@@ -124,7 +124,7 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 		long uid = args.getLong(TAG_UID, 0);
 		long maxID = args.getLong(MAX_ID, 0);
 		long sinceID = args.getLong(SINCE_ID, 0);
-		return new Task_LoadUserTimeline(mainActivity, uid, maxID, sinceID);
+		return new UserTimelineLoader(mainActivity, uid, maxID, sinceID);
 	}
 	//------------------------------------------------------------------------------------------------------------------
 

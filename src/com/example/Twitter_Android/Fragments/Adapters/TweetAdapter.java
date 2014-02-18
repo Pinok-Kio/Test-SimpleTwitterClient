@@ -50,7 +50,7 @@ public class TweetAdapter extends TimelineAdapter<Tweet> {
 		cache = DataCache.getInstance();
 		imageDownloader = new ImageDownloader();
 		isImagesLoadingAllowed = PreferenceManager.getDefaultSharedPreferences(activity)
-				.getBoolean(SettingsActivity.ALLOW_IMAGE_LOADING_KEY, true);
+				.getBoolean(SettingsActivity.ALLOW_IMAGE_LOADING, true);
 	}
 
 	//------------------------------------------------------------------------------------------------------------------

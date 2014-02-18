@@ -12,22 +12,19 @@ import java.util.List;
 
 public class Task_LoadSearchedTweets extends TweetLoader<Tweet> {
 	private final String toFind;
-	private final int MAX_RESULT_COUNT;
 
 	public Task_LoadSearchedTweets(Context context, String query) {
 		super(context);
 		toFind = query;
-		String value = PreferenceManager.getDefaultSharedPreferences(context).getString(SettingsActivity.ALLOWED_TWEET_COUNT, "100");
-		MAX_RESULT_COUNT = Integer.valueOf(value);
 	}
 
 	@Override
-	public List<Tweet> loadInBackground() {
+	public List<? extends Tweet> loadInBackground() {
 		final Connector connector = Connector.getInstance();
 
-		List<Tweet> loadedTweets = new ArrayList<>();
+		List<? extends Tweet> loadedTweets = new ArrayList<>();
 		try {
-			loadedTweets = connector.findTweets(toFind, MAX_RESULT_COUNT);
+			loadedTweets = connector.findTweets(toFind, RESULT_COUNT);
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}

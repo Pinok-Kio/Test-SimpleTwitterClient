@@ -24,6 +24,7 @@ import java.lang.ref.WeakReference;
 
 public class ImageDownloader {
 	private static final DataCache cache = DataCache.getInstance();
+
 	//------------------------------------------------------------------------------------------------------------------
 	private class BitmapDownloaderTask extends AsyncTask<String, Void, Bitmap> {
 		private String url;
@@ -51,15 +52,12 @@ public class ImageDownloader {
 			if (isCancelled()) {
 				bitmap = null;
 			}
-
-			if (imageViewReference != null) {
-				ImageView imageView = imageViewReference.get();
-				final BitmapDownloaderTask bitmapDownloaderTask = getBitmapDownloaderTask(imageView);
-				if (this == bitmapDownloaderTask && imageView != null) {
-					imageView.setImageBitmap(bitmap);
-					if (!imageView.isShown()) {
-						imageView.setVisibility(View.VISIBLE);
-					}
+			ImageView imageView = imageViewReference.get();
+			final BitmapDownloaderTask bitmapDownloaderTask = getBitmapDownloaderTask(imageView);
+			if (this == bitmapDownloaderTask && imageView != null) {
+				imageView.setImageBitmap(bitmap);
+				if (!imageView.isShown()) {
+					imageView.setVisibility(View.VISIBLE);
 				}
 			}
 			if (progressBar != null) {

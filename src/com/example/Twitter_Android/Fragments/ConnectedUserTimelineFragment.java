@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.app.DialogFragment;
 import android.content.Loader;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,7 +15,7 @@ import com.example.Twitter_Android.Fragments.Adapters.TweetAdapter;
 import com.example.Twitter_Android.Fragments.Dialogs.DeleteTweetDialog;
 import com.example.Twitter_Android.Fragments.Dialogs.PostTweetDialog;
 import com.example.Twitter_Android.Fragments.Dialogs.ReplyDialog;
-import com.example.Twitter_Android.Loaders.Task_LoadUserTimeline;
+import com.example.Twitter_Android.Loaders.UserTimelineLoader;
 import com.example.Twitter_Android.Logic.Constants;
 import com.example.Twitter_Android.Logic.DataCache;
 import com.example.Twitter_Android.Logic.Tweet;
@@ -41,7 +43,7 @@ public class ConnectedUserTimelineFragment extends TimelineFragment<Tweet> {
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
-	public static ConnectedUserTimelineFragment newInstance() {
+	public static ConnectedUserTimelineFragment getInstance() {
 		return instance;
 	}
 	//------------------------------------------------------------------------------------------------------------------
@@ -98,13 +100,11 @@ public class ConnectedUserTimelineFragment extends TimelineFragment<Tweet> {
 			Если мы уже загрузили все твиты, которые уже написали, то больше даже не будем пытаться создать loader,
 			ведь новые твиты мы будем просто добавлять в адаптер.
 		 */
-		return new Task_LoadUserTimeline(mainActivity, cache.getConnectedUserID(), 0, 0);
+		return new UserTimelineLoader(mainActivity, cache.getConnectedUserID(), 0, 0);
 	}
 
 	@Override
 	public void onLoadFinished(Loader<List<? extends Tweet>> loader, List<? extends Tweet> data) {
-		System.out.println("ConnectedUserTimelineFragment onLoadFinished " + data.size() + " " + data.get(0));
-
 		if ((data.size() > 0) && (loader != null)) {
 			switch (loader.getId()) {
 				case TIMELINE_LOADER_ID:
@@ -129,7 +129,6 @@ public class ConnectedUserTimelineFragment extends TimelineFragment<Tweet> {
 
 	@Override
 	public void onLoaderReset(Loader<List<? extends Tweet>> loader) {
-		currentAdapter = null;
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -142,6 +141,13 @@ public class ConnectedUserTimelineFragment extends TimelineFragment<Tweet> {
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.menu_my_tweets, menu);
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
@@ -149,7 +155,6 @@ public class ConnectedUserTimelineFragment extends TimelineFragment<Tweet> {
 				postTweet();
 				return true;
 			case R.id.menu_item_remove_tweet:
-				Toast.makeText(mainActivity, "NEED TO DO REMOVE TWEET DIALOG", Toast.LENGTH_LONG).show();
 				deleteTweet();
 				return true;
 		}

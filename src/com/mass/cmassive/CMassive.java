@@ -176,20 +176,6 @@ public class CMassive<T> {
 		}
 	}
 
-	public void showReal() {
-		for (T t : massive) {
-			if (t == null) {
-				System.out.print(" n ");
-			} else {
-				System.out.print(t + " ");
-			}
-		}
-	}
-
-	public int getFullSize() {
-		return fullSize;
-	}
-
 	public int getDataSize() {
 		return dataSize;
 	}

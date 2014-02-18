@@ -2,21 +2,29 @@ package com.example.Twitter_Android.Fragments;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.SearchManager;
+import android.app.SearchableInfo;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 import com.example.Twitter_Android.AppActivity.ConcreteUserTimelineActivity;
+import com.example.Twitter_Android.AppActivity.SearchableActivity;
 import com.example.Twitter_Android.Fragments.Adapters.TimelineAdapter;
-import com.example.Twitter_Android.Fragments.Dialogs.UserInfoDialog;
-import com.example.Twitter_Android.Logic.Constants;
-import com.example.Twitter_Android.Logic.DataCache;
 import com.example.Twitter_Android.Fragments.Adapters.TweetAdapter;
 import com.example.Twitter_Android.Fragments.Dialogs.DirectMessageDialog;
-import com.example.Twitter_Android.Loaders.Task_LoadHomeTimeline;
+import com.example.Twitter_Android.Fragments.Dialogs.UserInfoDialog;
+import com.example.Twitter_Android.Loaders.HomeTimelineLoader;
+import com.example.Twitter_Android.Logic.Constants;
+import com.example.Twitter_Android.Logic.DataCache;
 import com.example.Twitter_Android.Logic.Person;
 import com.example.Twitter_Android.Logic.Tweet;
 import com.example.Twitter_Android.Net.Connector;
@@ -98,6 +106,7 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 		startActivity(intent);
 		return true;
 	}
+
 	//------------------------------------------------------------------------------------------------------------------
 	@Override
 	protected void loadOldItems() {
@@ -107,6 +116,7 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 		mainActivity.getLoaderManager().restartLoader(OLD_TWEETS_LOADER, args, this);
 	}
 	//------------------------------------------------------------------------------------------------------------------
+
 	/**
 	 * Загрузить новейшие твиты.
 	 * Происходит, когда пользователь листает твиты в начало, не чаще одного раза в NEWEST_TWEET_LOAD_PERIOD мс.
@@ -117,6 +127,7 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 		args.putLong(SINCE_ID, sinceID);
 		mainActivity.getLoaderManager().restartLoader(NEWEST_TWEETS_LOADER_ID, args, this);
 	}
+
 	//------------------------------------------------------------------------------------------------------------------
 	@Override
 	public Loader<List<? extends Tweet>> onCreateLoader(int id, Bundle args) {
@@ -130,14 +141,14 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 				if (args != null) {
 					tweetMaxValue = args.getLong(MAX_ID, 0);
 				}
-				return new Task_LoadHomeTimeline(mainActivity, tweetMaxValue, 0);
+				return new HomeTimelineLoader(mainActivity, tweetMaxValue, 0);
 
 			case NEWEST_TWEETS_LOADER_ID:
 				long sinceIdValue = 0;
 				if (args != null) {
 					sinceIdValue = args.getLong(SINCE_ID, 0);
 				}
-				return new Task_LoadHomeTimeline(mainActivity, 0, sinceIdValue);
+				return new HomeTimelineLoader(mainActivity, 0, sinceIdValue);
 		}
 		return null;
 	}
@@ -179,6 +190,23 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 		setListAdapter(null);
 	}
 	//------------------------------------------------------------------------------------------------------------------
+
+	@Override
+	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		super.onCreateOptionsMenu(menu, inflater);
+		inflater.inflate(R.menu.menu_home_timeline, menu);
+
+		SearchView searchView = (SearchView) menu.findItem(R.id.menu_search).getActionView();
+		if (searchView == null) {
+			return;
+		}
+
+		SearchManager searchManager = (SearchManager) mainActivity.getSystemService(Context.SEARCH_SERVICE);
+		ComponentName cn = new ComponentName(mainActivity, SearchableActivity.class);
+		SearchableInfo info = searchManager.getSearchableInfo(cn);
+		searchView.setSearchableInfo(info);
+	}
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {

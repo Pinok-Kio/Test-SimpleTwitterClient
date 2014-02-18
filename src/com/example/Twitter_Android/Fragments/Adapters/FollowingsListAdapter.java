@@ -40,7 +40,7 @@ public class FollowingsListAdapter extends TimelineAdapter<Person> {
 		imageDownloader = new ImageDownloader();
 		cache = DataCache.getInstance();
 		isImagesLoadingAllowed = PreferenceManager.getDefaultSharedPreferences(activity)
-				.getBoolean(SettingsActivity.ALLOW_IMAGE_LOADING_KEY, true);
+				.getBoolean(SettingsActivity.ALLOW_IMAGE_LOADING, true);
 	}
 
 	//------------------------------------------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 package com.example.Twitter_Android.Logic;
 
-public class Constants {
+public final class Constants {
 	public static final int AUTH_PAGE_URI_LOADER_ID = 1;
 	public static final int USER_INFO_LOADER_ID = 2;
 	public static final int HOME_OLD_TWEETS_LOADER = 3;

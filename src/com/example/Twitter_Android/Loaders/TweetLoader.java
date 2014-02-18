@@ -8,15 +8,15 @@ import com.example.Twitter_Android.AppActivity.SettingsActivity;
 import java.util.List;
 
 abstract class TweetLoader<T> extends AsyncTaskLoader<List<? extends T>> {
-	protected final int DEFAULT_TWEET_COUNT;
+	protected final int RESULT_COUNT;
 	private List<? extends T> loadedTweets;
-	private static final String DEFAULT_TWEET = "50";
+	private static final String DEFAULT_TWEET_COUNT = "50";
 
 	//------------------------------------------------------------------------------------------------------------------
 	TweetLoader(Context context) {
 		super(context);
-		String value = PreferenceManager.getDefaultSharedPreferences(context).getString(SettingsActivity.ALLOWED_TWEET_COUNT, DEFAULT_TWEET);
-		DEFAULT_TWEET_COUNT = Integer.valueOf(value);
+		String value = PreferenceManager.getDefaultSharedPreferences(context).getString(SettingsActivity.ALLOWED_TWEET_COUNT, DEFAULT_TWEET_COUNT);
+		RESULT_COUNT = Integer.valueOf(value);
 	}
 	//------------------------------------------------------------------------------------------------------------------
 

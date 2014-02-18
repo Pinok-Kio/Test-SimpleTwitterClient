@@ -1,8 +1,7 @@
 package com.example.Twitter_Android.Logic;
 /**
- *  Типа кэш.
+ *  Some sort of cache.
  */
-
 import android.graphics.Bitmap;
 import android.widget.BaseAdapter;
 
@@ -16,7 +15,7 @@ public final class DataCache {
 	private static final Map<String, BaseAdapter> adapters = new ConcurrentHashMap<>();
 	private static final DataCache instance = new DataCache();
 	private long bitmapCacheSize;
-	private static final int MAX_CACHE_SIZE = 32 * 1024 * 1024;
+	private static final int MAX_CACHE_SIZE = 16 * 1024 * 1024; //16 Mb
 	private int maxBitmapDimension = 500;
 	private long connectedUserID;
 
@@ -32,7 +31,6 @@ public final class DataCache {
 		if (bitmapCacheSize > MAX_CACHE_SIZE) {
 			bitmaps.clear();
 			bitmapCacheSize = 0;
-			System.out.println("CLEAR CACHE");
 		}
 		bitmaps.put(key, image);
 	}
@@ -60,11 +58,11 @@ public final class DataCache {
 		}
 	}
 
-	public void setMaxBitmapDimension(int dimension) {
+	public void setScreenWidth(int dimension) {
 		maxBitmapDimension = dimension;
 	}
 
-	public int getMaxBitmapDimension() {
+	public int getScreenWidth() {
 		return maxBitmapDimension;
 	}
 
