@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="CustomActionBarTheme" parent="android:Theme.Holo">
+		<item name="android:actionBarStyle">@style/MyActionBar</item>
+		<item name="android:actionBarTabStyle">@style/MyActionBarTabStyle</item>
+		<item name="android:actionBarTabTextStyle">@style/TabTextStyle</item>
+		<item name="android:actionMenuTextColor">@color/tweet_text_color</item>
+	</style>
+
+	<style name="MyActionBar" parent="android:Widget.Holo.ActionBar">
+		<item name="android:titleTextStyle">@style/TitleTextStyle</item>
+		<item name="android:background">@drawable/actionbar_background</item>
+		<item name="android:backgroundStacked">@drawable/tabs_background</item>
+		<item name="android:backgroundSplit">@drawable/actionbar_background</item>
+	</style>
+
+	<style name="MyActionBarTabStyle" parent="android:Widget.Holo.ActionBar.TabView">
+		<item name="android:background">@drawable/actionbar_tabs_selector</item>
+	</style>
+
+	<style name="TitleTextStyle" parent="android:TextAppearance.Holo.Widget.ActionBar.Title">
+		<item name="android:textColor">#ffffffff</item>
+	</style>
+
+	<style name="TabTextStyle" parent="android:Widget.Holo.ActionBar.TabText">
+		<item name="android:textColor">#ffffffff</item>
+	</style>
+</resources>

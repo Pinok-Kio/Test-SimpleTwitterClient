@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+	<PreferenceCategory
+			android:title="@string/pref_title"
+			android:key="key_pref_category">
+
+		<CheckBoxPreference
+				android:key="key_pref_images_loading"
+				android:title="@string/pref_image_loading"
+				android:summary="@string/pref_image_loading_summary"
+				android:defaultValue="@bool/default_allow_image_loading"/>
+
+		<ListPreference
+				android:key="key_pref_number_of_tweets"
+				android:title="@string/pref_tweet_potion"
+				android:summary="@string/pref_tweet_potion_summary"
+				android:entries="@array/prefs_tweets_values"
+				android:entryValues="@array/default_tweet_values"
+				android:defaultValue="50"
+				android:dialogTitle="Dialog"/>
+
+
+	</PreferenceCategory>
+
+
+</PreferenceScreen>

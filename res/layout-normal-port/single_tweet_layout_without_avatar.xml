@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:id="@+id/single_tweet_layout_without_avatar"
+                android:background="@drawable/background_single_tweet_selector">
+
+	<TextView
+			android:id="@+id/username_textview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/tweet_text_color"
+			android:text="@string/text_user_name"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentLeft="true"
+			android:layout_marginLeft="15dp"
+			android:layout_marginTop="10dp"/>
+
+	<TextView
+			android:id="@+id/user_screen_name_textview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textSize="12sp"
+			android:textColor="@color/screen_name_color"
+			android:text="@string/text_user_screen_name"
+			android:layout_below="@id/username_textview"
+			android:layout_alignLeft="@+id/username_textview"
+			android:layout_marginTop="2dp"/>
+
+	<TextView
+			android:id="@+id/tweet_date_textview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/tweet_text_color"
+			android:text="@string/text_date"
+			android:layout_above="@+id/user_screen_name_textview"
+			android:layout_alignParentRight="true"
+			android:layout_marginRight="10dp"/>
+
+	<TextView
+			android:id="@+id/tweet_text_textview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/tweet_text_color"
+			android:text="@string/text"
+			android:autoLink="web"
+			android:layout_below="@+id/user_screen_name_textview"
+			android:layout_alignLeft="@+id/username_textview"
+			android:layout_marginTop="5dp"
+			android:layout_marginRight="5dp"
+			android:layout_marginBottom="10dp"/>
+	<ImageView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/attached_image"
+			android:layout_below="@+id/tweet_text_textview"
+			android:layout_margin="20dp"
+			android:layout_centerHorizontal="true"
+			android:visibility="gone"/>
+	<Button
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/btn_show_image"
+			android:id="@+id/button_show_image"
+			android:background="@drawable/button_background_set"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:layout_below="@+id/attached_image"
+			android:layout_marginBottom="20dp"
+			android:layout_centerHorizontal="true"/>
+
+	<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/image_button_reply"
+			android:background="@drawable/action_reply"
+			android:layout_below="@+id/button_show_image"
+			android:layout_alignStart="@+id/username_textview"/>
+
+	<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/image_button_retweet"
+			android:background="@drawable/action_retweet"
+			android:layout_marginRight="10dp"
+			android:layout_alignTop="@+id/image_button_reply"
+			android:layout_toRightOf="@+id/image_button_reply"/>
+
+	<ImageButton
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:id="@+id/image_button_favorite"
+			android:layout_alignTop="@+id/image_button_reply"
+			android:layout_toRightOf="@+id/image_button_retweet"
+			android:background="@drawable/ic_action_important"/>
+</RelativeLayout>

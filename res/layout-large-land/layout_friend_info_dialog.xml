@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="10dp">
+
+	<ImageView
+			android:id="@+id/info_friend_avatar_imageview"
+			android:layout_width="80dp"
+			android:layout_height="80dp"
+			android:layout_alignParentLeft="true"
+			android:layout_marginLeft="20dp"
+			android:layout_marginRight="20dp"
+			android:layout_marginTop="10dp"
+			android:src="@drawable/ic_noavatar"
+			android:contentDescription="Friend personal Avatar"/>
+
+	<TextView
+			android:id="@+id/info_friend_name_textview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:text="@string/text_user_name"
+			android:layout_marginTop="10dp"
+			android:layout_below="@+id/info_friend_avatar_imageview"
+			android:layout_alignLeft="@+id/info_friend_avatar_imageview"/>
+
+	<TextView
+			android:id="@+id/info_friend_screen_name_textview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/screen_name_color"
+			android:textSize="12sp"
+			android:text="@string/text_user_screen_name"
+			android:layout_below="@+id/info_friend_name_textview"
+			android:layout_alignLeft="@+id/info_friend_name_textview"
+			android:layout_marginTop="2dp"/>
+
+	<TextView
+			android:id="@+id/info_friend_info_textview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:text="@string/text"
+			android:layout_alignTop="@+id/info_friend_avatar_imageview"
+			android:layout_toRightOf="@+id/info_friend_avatar_imageview"
+			android:layout_toLeftOf="@+id/info_button_follow"/>
+
+	<Button
+			android:id="@+id/info_button_follow"
+			style="?android:attr/buttonStyleSmall"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/text_unfollow"
+			android:layout_marginRight="20dp"
+			android:layout_marginLeft="10dp"
+			android:layout_marginTop="10dp"
+			android:background="@drawable/button_background_set"
+			android:layout_alignParentRight="true"
+			android:paddingLeft="5dp"
+			android:paddingRight="5dp"
+			/>
+	<Button
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/btn_cancel"
+			android:id="@+id/button_close_dialog"
+			style="?android:borderlessButtonStyle"
+			android:layout_below="@+id/info_friend_screen_name_textview"
+			android:layout_centerHorizontal="true"
+			android:layout_marginTop="10dp"/>
+
+</RelativeLayout>

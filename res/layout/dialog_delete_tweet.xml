@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:background="@drawable/background_single_tweet"
+			android:textColor="@color/tweet_text_color"
+			android:id="@+id/dialog_tweet_to_delete"
+			android:layout_margin="30dp"
+			android:padding="5dp"
+			android:layout_alignParentTop="true"
+			android:layout_centerHorizontal="true"/>
+
+	<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/linearLayout"
+			android:layout_below="@+id/dialog_tweet_to_delete"
+			android:layout_marginTop="20dp">
+
+		<Button
+				style="?android:attr/borderlessButtonStyle"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="0.5"
+				android:text="@string/btn_cancel"
+				android:textSize="16sp"
+				android:id="@+id/button_cancel"/>
+
+		<Button
+				style="?android:attr/borderlessButtonStyle"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="0.5"
+				android:text="@string/btn_delete"
+				android:textSize="16sp"
+				android:id="@+id/button_delete"/>
+	</LinearLayout>
+</RelativeLayout>

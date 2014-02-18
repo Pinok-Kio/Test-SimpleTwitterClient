@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<group android:id="@+id/menu_my_tweets">
+		<item
+				android:id="@+id/menu_item_post_tweet"
+				android:title="@string/text_post_tweet"
+				android:icon="@drawable/ic_action_edit"
+				android:showAsAction="always"/>
+		<item
+				android:id="@+id/menu_item_remove_tweet"
+				android:title="@string/text_remove_tweet"
+				android:icon="@drawable/ic_action_discard"
+				android:showAsAction="always"/>
+	</group>
+
+</menu>

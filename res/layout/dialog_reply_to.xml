@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+		xmlns:android="http://schemas.android.com/apk/res/android"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent">
+
+	<TextView
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:text="@string/text"
+			android:textColor="@color/tweet_text_color"
+			android:id="@+id/dialog_tweet_to_reply_text"
+			android:background="@drawable/background_single_tweet"
+			android:layout_margin="10dp"
+			android:padding="5dp"/>
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/dialog_tweet_length"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:id="@+id/dialog_tweet_length"
+			android:labelFor="@+id/dialog_tweet_text"
+			android:layout_below="@+id/dialog_tweet_to_reply_text"
+			android:layout_marginTop="20dp"
+			android:layout_alignStart="@+id/dialog_tweet_to_reply_text"/>
+
+	<EditText
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="10dp"
+			android:inputType="textMultiLine"
+			android:ems="10"
+			android:id="@+id/dialog_tweet_text"
+			android:layout_marginTop="35dp"
+			android:layout_below="@+id/dialog_tweet_length"/>
+
+	<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/linearLayout"
+			android:layout_below="@+id/dialog_tweet_text"
+			android:layout_marginTop="25dp">
+
+		<Button
+				style="?android:attr/borderlessButtonStyle"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="0.5"
+				android:text="@string/btn_cancel"
+				android:textSize="16sp"
+				android:id="@+id/button_cancel"/>
+
+		<Button
+				style="?android:attr/borderlessButtonStyle"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="0.5"
+				android:text="@string/btn_reply"
+				android:textSize="16sp"
+				android:id="@+id/button_reply"/>
+	</LinearLayout>
+
+
+</RelativeLayout>

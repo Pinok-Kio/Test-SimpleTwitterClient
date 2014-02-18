@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<group android:id="@+id/group_menu_home_timeline">
+		<item
+				android:id="@+id/menu_search"
+				android:title="@string/text_search"
+				android:showAsAction="always"
+				android:actionViewClass="android.widget.SearchView"/>
+
+		<item
+				android:id="@+id/menu_item_send_message"
+				android:title="@string/text_send_message"
+				android:icon="@drawable/ic_action_edit"
+				android:showAsAction="always"/>
+
+		<item
+				android:id="@+id/menu_item_messages"
+				android:title="@string/menuitem_messages"
+				android:icon="@drawable/ic_action_email"
+				android:showAsAction="always"/>
+
+		<item
+				android:id="@+id/menu_item_info"
+				android:title="@string/text_user_info"
+				android:icon="@drawable/ic_action_user"
+				android:showAsAction="always"/>
+
+		<item
+				android:id="@+id/menu_settings"
+				android:title="@string/text_settings"
+				android:showAsAction="never"/>
+
+		<item
+				android:id="@+id/menu_about"
+				android:title="@string/text_about"
+				android:showAsAction="never"/>
+	</group>
+
+</menu>

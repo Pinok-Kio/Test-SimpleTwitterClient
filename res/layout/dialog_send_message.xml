@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<ImageView
+			android:layout_width="60dp"
+			android:layout_height="60dp"
+			android:id="@+id/avatar"
+			android:layout_alignParentTop="true"
+			android:layout_alignParentStart="true"
+			android:layout_margin="20dp"
+			android:contentDescription="User avatar"/>
+
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:text="@string/text_user_name"
+			android:id="@+id/user_name"
+			android:layout_alignTop="@+id/avatar"
+			android:layout_toRightOf="@+id/avatar"/>
+
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/screen_name_color"
+			android:text="@string/text_user_screen_name"
+			android:id="@+id/user_screen_name"
+			android:layout_below="@+id/user_name"
+			android:layout_alignStart="@+id/user_name"/>
+
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="@string/dialog_tweet_length"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:id="@+id/dialog_tweet_length"
+			android:labelFor="@+id/dialog_tweet_text"
+			android:layout_below="@+id/avatar"
+			android:layout_alignStart="@+id/avatar"/>
+
+	<EditText
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="10dp"
+			android:inputType="textMultiLine"
+			android:ems="10"
+			android:id="@+id/dialog_message_text"
+			android:layout_marginTop="35dp"
+			android:layout_below="@+id/dialog_tweet_length"/>
+
+	<LinearLayout
+			android:orientation="horizontal"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/linearLayout"
+			android:layout_below="@+id/dialog_message_text"
+			android:layout_marginTop="25dp">
+
+		<Button
+				style="?android:attr/borderlessButtonStyle"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="0.5"
+				android:text="@string/btn_cancel"
+				android:textSize="16sp"
+				android:id="@+id/button_cancel"/>
+
+		<Button
+				style="?android:attr/borderlessButtonStyle"
+				android:layout_width="0dp"
+				android:layout_height="wrap_content"
+				android:layout_weight="0.5"
+				android:text="@string/btn_send"
+				android:textSize="16sp"
+				android:id="@+id/button_send_message"/>
+	</LinearLayout>
+</RelativeLayout>

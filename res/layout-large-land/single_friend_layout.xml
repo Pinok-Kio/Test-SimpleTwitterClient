@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingBottom="10dp"
+                android:id="@+id/single_friend_layout">
+
+	<ImageView
+			android:layout_width="80dp"
+			android:layout_height="80dp"
+			android:id="@+id/friend_avatar_imageview"
+			android:layout_alignParentLeft="true"
+			android:layout_marginLeft="20dp"
+			android:layout_marginRight="20dp"
+			android:layout_centerInParent="true"
+			android:saveEnabled="true"
+			android:src="@drawable/ic_noavatar"
+			android:contentDescription="Friend personal Avatar"/>
+
+	<TextView
+			android:id="@+id/friend_name_textview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:text="@string/text_user_name"
+			android:layout_marginTop="15dp"
+			android:layout_toRightOf="@+id/friend_avatar_imageview"/>
+
+	<TextView
+			android:id="@+id/friend_screen_name_textview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/screen_name_color"
+			android:textSize="12sp"
+			android:text="@string/text_user_screen_name"
+			android:layout_alignBottom="@+id/friend_name_textview"
+			android:layout_toRightOf="@+id/friend_name_textview"
+			android:layout_marginLeft="10dp"/>
+
+	<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:text="@string/text_from"
+			android:id="@+id/friend_from_textview"
+			android:layout_marginTop="10dp"
+			android:layout_below="@id/friend_name_textview"
+			android:layout_toRightOf="@+id/friend_avatar_imageview"/>
+
+	<TextView
+			android:id="@+id/friend_info_textview"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:text="@string/text"
+			android:layout_marginTop="10dp"
+			android:layout_below="@+id/friend_from_textview"
+			android:layout_toRightOf="@+id/friend_avatar_imageview"/>
+
+
+	<!--<Button-->
+	<!--style="?android:attr/buttonStyleSmall"-->
+	<!--android:layout_width="wrap_content"-->
+	<!--android:layout_height="wrap_content"-->
+	<!--android:text="@string/unfollow"-->
+	<!--android:id="@+id/button_follow"-->
+	<!--android:layout_marginRight="20dp"-->
+	<!--android:background="@drawable/rounded_corners"-->
+	<!--android:layout_centerVertical="true"-->
+	<!--android:layout_alignParentRight="true"-->
+	<!--android:paddingLeft="5dp"-->
+	<!--android:paddingRight="5dp"-->
+	<!--/>-->
+
+</RelativeLayout>

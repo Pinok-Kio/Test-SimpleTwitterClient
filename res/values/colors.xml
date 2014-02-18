@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<color name="red">#FF00</color>
+	<color name="screen_name_color">#ff6f706f</color>
+	<color name="info_username_color">#ff000e23</color>
+	<color name="info_userscreenname_color">#ff12132c</color>
+	<color name="tweet_text_color">#ff000606</color>
+	<color name="white">#ffffff</color>
+</resources>
