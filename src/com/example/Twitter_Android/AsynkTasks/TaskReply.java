@@ -19,11 +19,12 @@ public class TaskReply extends AsyncTask<Bundle, Void, Boolean> {
 	@Override
 	protected Boolean doInBackground(Bundle... params) {
 		if (params.length > 0) {
+			final Connector connector = new Connector();
 			Bundle param = params[0];
 			long tweetID = param.getLong(TWEET_ID, 0);
 			String text = param.getString(TEXT, "");
 
-			return Connector.getInstance().replyTo(tweetID, text);
+			return connector.replyTo(tweetID, text);
 		}
 		return false;
 	}

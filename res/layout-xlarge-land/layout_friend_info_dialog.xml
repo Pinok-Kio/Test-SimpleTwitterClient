@@ -14,13 +14,13 @@
 			android:layout_marginRight="5dp"
 			android:layout_marginTop="5dp"
 			android:src="@drawable/ic_noavatar"
-			android:contentDescription="Friend personal Avatar"/>
+			android:contentDescription="@string/text_content_description"/>
 
 	<TextView
 			android:id="@+id/info_friend_name_textview"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:text="@string/text_user_name"
 			android:layout_marginTop="5dp"
 			android:layout_toRightOf="@+id/info_friend_avatar_imageview"/>
@@ -29,7 +29,7 @@
 			android:id="@+id/info_friend_screen_name_textview"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@color/screen_name_color"
 			android:textSize="12sp"
 			android:text="@string/text_user_screen_name"
@@ -41,7 +41,7 @@
 			android:id="@+id/info_friend_info_textview"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:text="@string/text"
 			android:layout_marginTop="5dp"
 			android:layout_below="@+id/info_friend_name_textview"

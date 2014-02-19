@@ -7,18 +7,19 @@ public class Tweet {
 	private final String creationDate;
 	private final String lang;
 	private final String[] hashtags;
-	private final Person person;
+	private final Person author;
 	private final String mediaUrl;
 	private final long ID;
 	private final boolean hasMedia;
 	private final boolean hasLinkInText;
+	private Person retweetedBy;
 
 	public Tweet(String text, String creationDate, String lang, String[] hashtags, Person person, String[] mediaUrl, long ID) {
 		this.text = text;
 		this.creationDate = creationDate;
 		this.lang = lang;
 		this.hashtags = hashtags;
-		this.person = person;
+		this.author = person;
 		this.mediaUrl = (mediaUrl != null) ? mediaUrl[0] : null;
 		this.ID = ID;
 		hasMedia = (mediaUrl != null);
@@ -41,8 +42,8 @@ public class Tweet {
 		return hashtags;
 	}
 
-	public Person getPerson() {
-		return person;
+	public Person getAuthor() {
+		return author;
 	}
 
 	public boolean hasMedia() {
@@ -61,10 +62,22 @@ public class Tweet {
 		return hasLinkInText;
 	}
 
+	public boolean isRetweeted() {
+		return retweetedBy != null;
+	}
+
+	public Person retweetedBy() {
+		return retweetedBy;
+	}
+
+	public void setRetweetedBy(Person person) {
+		retweetedBy = person;
+	}
+
 	@Override
 	public String toString() {
 		String line = "----------------------------------------------------------------------";
-		return line + "\n" + text + " created at: " + creationDate + "\n" + Arrays.toString(hashtags) + "\n" + person;
+		return line + "\n" + text + " created at: " + creationDate + "\n" + Arrays.toString(hashtags) + "\n" + author;
 	}
 
 	@Override
@@ -81,7 +94,7 @@ public class Tweet {
 				&& Arrays.equals(hashtags, tweet.hashtags)
 				&& !(lang != null ? !lang.equals(tweet.lang) : tweet.lang != null)
 				&& !(mediaUrl != null ? !mediaUrl.equals(tweet.mediaUrl) : tweet.mediaUrl != null)
-				&& !(person != null ? !person.equals(tweet.person) : tweet.person != null)
+				&& !(author != null ? !author.equals(tweet.author) : tweet.author != null)
 				&& !(text != null ? !text.equals(tweet.text) : tweet.text != null);
 	}
 
@@ -91,7 +104,7 @@ public class Tweet {
 		result = 31 * result + creationDate.hashCode();
 		result = 31 * result + (lang != null ? lang.hashCode() : 0);
 		result = 31 * result + (hashtags != null ? Arrays.hashCode(hashtags) : 0);
-		result = 31 * result + person.hashCode();
+		result = 31 * result + author.hashCode();
 		result = 31 * result + (mediaUrl != null ? mediaUrl.hashCode() : 0);
 		result = 31 * result + (int) (ID ^ (ID >>> 32));
 		result = 31 * result + (hasMedia ? 1 : 0);

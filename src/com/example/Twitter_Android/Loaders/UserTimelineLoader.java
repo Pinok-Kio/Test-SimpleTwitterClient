@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserTimelineLoader extends TweetLoader<Tweet> {
-	private static Connector connector;
 	private final long maxID;
 	private final long sinceID;
 	private final long userID;
@@ -17,7 +16,6 @@ public class UserTimelineLoader extends TweetLoader<Tweet> {
 	//------------------------------------------------------------------------------------------------------------------
 	public UserTimelineLoader(Context context, long userID, long maxID, long sinceID) {
 		super(context);
-		connector = Connector.getInstance();
 		/*
 			Check. One of this parameters always must be 0.
 			If not - loading newest tweets
@@ -33,6 +31,7 @@ public class UserTimelineLoader extends TweetLoader<Tweet> {
 	//------------------------------------------------------------------------------------------------------------------
 	@Override
 	public List<? extends Tweet> loadInBackground() {
+		final Connector connector = new Connector();
 		List<? extends Tweet> loadedTweets = new ArrayList<>();
 		try {
 			loadedTweets = connector.getStatuses_UserTimeline(userID, maxID, sinceID, RESULT_COUNT);

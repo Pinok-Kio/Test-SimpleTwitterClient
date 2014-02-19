@@ -18,7 +18,7 @@ public class Task_LoadSearchedUsers extends TweetLoader<Person> {
 
 	@Override
 	public List<? extends Person> loadInBackground() {
-		final Connector connector = Connector.getInstance();
+		final Connector connector = new Connector();
 
 		List<? extends Person> loadedTweets = new ArrayList<>();
 		try {

@@ -13,5 +13,6 @@ public final class Constants {
 	public static final int CONNECTED_USER_TIMELINE_LOADER = 10;
 	public static final int SEARCH_RESULT_LOADER = 11;
 	public static final int SEARCH_USERS_LOADER = 12;
+	public static final int FOLLOWERS_LOADER_ID = 13;
 
 }

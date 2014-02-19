@@ -26,7 +26,7 @@ public abstract class TimelineFragment<T> extends ListFragment implements Loader
 	/**
 	 * Минимальный период, через который можно подгружать новейшие твиты, в мс.
 	 */
-	private static final int NEWEST_TWEET_LOAD_PERIOD = 180_000;
+	private static final int NEWEST_TWEET_LOAD_PERIOD = 70_000;
 	/**
 	 * Время предыдущей загрузки новых твитов. Необходимо, чтобы сделать загрузку новых твитов раз в 3 минуты.
 	 */

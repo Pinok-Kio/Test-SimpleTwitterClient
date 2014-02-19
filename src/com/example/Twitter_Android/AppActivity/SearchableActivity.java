@@ -99,7 +99,7 @@ public class SearchableActivity extends ListActivity implements LoaderManager.Lo
 			followingsAdapter = null;
 		} else if (loader.getId() == USERS_LOADER) {
 			if (followingsAdapter == null) {
-				followingsAdapter = new FollowingsListAdapter(this, (List<? extends Person>) data);
+				followingsAdapter = new FollowingsListAdapter(this, (List<? extends Person>) data, ADAPTER_TAG);
 				setListAdapter(followingsAdapter);
 			} else {
 				followingsAdapter.addItemsInstead((List<? extends Person>) data);

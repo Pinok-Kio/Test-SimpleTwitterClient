@@ -14,7 +14,7 @@
 			android:layout_alignParentLeft="true"
 			android:layout_margin="10dp"
 			android:saveEnabled="true"
-			android:contentDescription="Personal Avatar"/>
+			android:contentDescription="@string/text_content_description"/>
 
 	<ImageView
 			android:layout_width="58dp"
@@ -25,6 +25,17 @@
 			android:id="@+id/imageView2"/>
 
 	<TextView
+			android:id="@+id/retweeted_by"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textColor="@color/tweet_text_color"
+			android:text="@string/text_retweeted_by"
+			android:layout_marginTop="10dp"
+			android:layout_toRightOf="@+id/user_avatar_imageview"
+			android:visibility="gone"/>
+
+	<TextView
 			android:id="@+id/username_textview"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -32,6 +43,7 @@
 			android:textStyle="bold"
 			android:textColor="@color/tweet_text_color"
 			android:text="@string/text_user_name"
+			android:layout_below="@+id/retweeted_by"
 			android:layout_marginTop="10dp"
 			android:layout_toRightOf="@+id/user_avatar_imageview"/>
 

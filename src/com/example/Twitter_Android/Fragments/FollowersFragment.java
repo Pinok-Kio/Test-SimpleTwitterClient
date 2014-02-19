@@ -15,7 +15,7 @@ import com.example.Twitter_Android.AsynkTasks.TaskUnfollow;
 import com.example.Twitter_Android.Fragments.Adapters.FollowingsListAdapter;
 import com.example.Twitter_Android.Fragments.Adapters.TimelineAdapter;
 import com.example.Twitter_Android.Fragments.Dialogs.DirectMessageDialog;
-import com.example.Twitter_Android.Loaders.FollowingsLoader;
+import com.example.Twitter_Android.Loaders.FollowersLoader;
 import com.example.Twitter_Android.Logic.Constants;
 import com.example.Twitter_Android.Logic.DataCache;
 import com.example.Twitter_Android.Logic.Person;
@@ -24,21 +24,21 @@ import com.example.Twitter_Android.R;
 
 import java.util.List;
 
-public class FollowingsFragment extends TimelineFragment<Person> {
+public class FollowersFragment extends TimelineFragment<Person> {
 	private Activity mainActivity;
 	private final Connector connector;
 	private TimelineAdapter<Person> currentAdapter;
-	private static final FollowingsFragment instance;
+	private static final FollowersFragment instance;
 	private long nextCursor = -1;
-	private static final int FOLLOWINGS_LOADER = Constants.FOLLOWINGS_LOADER_ID;
-	public static final String TAG = "TAG_FOLLOWINGS_FRAGMENT";
-	private static final String ADAPTER_TAG = "Followings_FRAGMENT";
+	private static final int FOLLOWERS_LOADER = Constants.FOLLOWERS_LOADER_ID;
+	public static final String TAG = "TAG_FOLLOWERS_FRAGMENT";
+	private static final String ADAPTER_TAG = "FOLLOWERS_ADAPTER";
 
 	static {
-		instance = new FollowingsFragment();
+		instance = new FollowersFragment();
 	}
 
-	private FollowingsFragment() {
+	private FollowersFragment() {
 		connector = new Connector();
 		setRetainInstance(true);
 		setHasOptionsMenu(true);
@@ -46,7 +46,7 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 
 	//------------------------------------------------------------------------------------------------------------------
 
-	public static FollowingsFragment getInstance() {
+	public static FollowersFragment getInstance() {
 		return instance;
 	}
 	//------------------------------------------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 		if (currentAdapter == null) {
 			currentAdapter = (FollowingsListAdapter) DataCache.getInstance().getAdapter(ADAPTER_TAG);
 			if (currentAdapter == null) {
-				mainActivity.getLoaderManager().initLoader(FOLLOWINGS_LOADER, null, this);
+				mainActivity.getLoaderManager().initLoader(FOLLOWERS_LOADER, null, this);
 			} else {
 				setListAdapter(currentAdapter);
 			}
@@ -76,7 +76,7 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 
 	@Override
 	protected void loadOldItems() {
-		mainActivity.getLoaderManager().restartLoader(FOLLOWINGS_LOADER, null, this);
+		mainActivity.getLoaderManager().restartLoader(FOLLOWERS_LOADER, null, this);
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -95,19 +95,19 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 
 	@Override
 	public Loader<List<? extends Person>> onCreateLoader(int id, Bundle args) {
-		if (id == FOLLOWINGS_LOADER) {
-			return new FollowingsLoader(getActivity(), connector, nextCursor);
+		if (id == FOLLOWERS_LOADER) {
+			return new FollowersLoader(getActivity(), connector, nextCursor);
 		}
 		return null;
 	}
 
 	@Override
 	public void onLoadFinished(Loader<List<? extends Person>> loader, List<? extends Person> data) {
-		if (loader.getId() == FOLLOWINGS_LOADER) {
+		if (loader.getId() == FOLLOWERS_LOADER) {
 			if (currentAdapter == null) {
 				currentAdapter = new FollowingsListAdapter(mainActivity, data, ADAPTER_TAG);
 				setListAdapter(currentAdapter);
-				DataCache.getInstance().saveAdapter(FollowingsListAdapter.TAG, currentAdapter);
+				DataCache.getInstance().saveAdapter(ADAPTER_TAG, currentAdapter);
 			} else {
 				currentAdapter.addItemsToBottom(data);
 			}
@@ -129,17 +129,16 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 
 	@Override
 	public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+		inflater.inflate(R.menu.menu_followers, menu);
 		super.onCreateOptionsMenu(menu, inflater);
-		inflater.inflate(R.menu.menu_followings, menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-			case R.id.menu_item_unfollow:
-				unfollow();
-				return true;
-
+		switch (item.getItemId()){
+			case R.id.menu_item_send_message:
+				sendDirectMessage();
+				break;
 		}
 		return super.onOptionsItemSelected(item);
 	}
@@ -149,18 +148,5 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 		DialogFragment dialog = DirectMessageDialog.getInstance(selectedPerson);
 		dialog.show(mainActivity.getFragmentManager().beginTransaction(), DirectMessageDialog.TAG);
 	}
-
 	//------------------------------------------------------------------------------------------------------------------
-	/*
-	    Отписаться от выбранного друга (followings).
-	 */
-	private void unfollow() {
-		Person toUnfollow = getSelectedItem();
-		final long idToDelete = toUnfollow.getID();
-		toUnfollow.changeFriendshipRelations();
-		currentAdapter.removeItem(getSelectedListItemPosition());
-		TaskUnfollow task = new TaskUnfollow();
-		task.execute(idToDelete);
-	}
-
 }

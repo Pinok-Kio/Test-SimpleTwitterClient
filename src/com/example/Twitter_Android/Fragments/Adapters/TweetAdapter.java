@@ -29,6 +29,7 @@ public class TweetAdapter extends TimelineAdapter<Tweet> {
 	private static boolean isImagesLoadingAllowed;
 
 	private static class ViewHolder {
+		TextView retweetedBy;
 		TextView name;
 		TextView screenName;
 		TextView date;
@@ -72,6 +73,7 @@ public class TweetAdapter extends TimelineAdapter<Tweet> {
 		if (convertView == null) {
 			convertView = layoutInflater.inflate(R.layout.single_tweet_layout, null);
 			holder = new ViewHolder();
+			holder.retweetedBy = (TextView) convertView.findViewById(R.id.retweeted_by);
 			holder.name = (TextView) convertView.findViewById(R.id.username_textview);
 			holder.screenName = (TextView) convertView.findViewById(R.id.user_screen_name_textview);
 			holder.date = (TextView) convertView.findViewById(R.id.tweet_date_textview);
@@ -88,9 +90,18 @@ public class TweetAdapter extends TimelineAdapter<Tweet> {
 			holder = (ViewHolder) convertView.getTag();
 		}
 		final Tweet tweet = getItem(position);
-		final Person person = tweet.getPerson();
-		holder.name.setText(person.getName());
-		holder.screenName.setText("@" + person.getScreenName());
+		final Person author = tweet.getAuthor();
+
+		if (tweet.isRetweeted()) {
+			Person p = tweet.retweetedBy();
+			holder.retweetedBy.setText(mainActivity.getString(R.string.text_retweeted_by) + " " + p.getName() + " @" + p.getScreenName());
+			holder.retweetedBy.setVisibility(View.VISIBLE);
+		} else {
+			holder.retweetedBy.setVisibility(View.GONE);
+		}
+
+		holder.name.setText(author.getName());
+		holder.screenName.setText("@" + author.getScreenName());
 		holder.date.setText(tweet.getCreationTime());
 		holder.text.setText(tweet.getText());
 		/*
@@ -104,9 +115,9 @@ public class TweetAdapter extends TimelineAdapter<Tweet> {
 		}
 		//--------Загружаем аватарку-----------------------------------
 		if (isImagesLoadingAllowed) {
-			Bitmap bitmapAvatar = cache.getImage(tweet.getPerson().getProfileImage());
+			Bitmap bitmapAvatar = cache.getImage(tweet.getAuthor().getProfileImage());
 			if (bitmapAvatar == null) {
-				imageDownloader.loadBitmap(tweet.getPerson().getProfileImage(), holder.avatar);
+				imageDownloader.loadBitmap(tweet.getAuthor().getProfileImage(), holder.avatar);
 			} else {
 				holder.avatar.setImageBitmap(bitmapAvatar);
 			}
@@ -178,6 +189,7 @@ public class TweetAdapter extends TimelineAdapter<Tweet> {
 		RetweetDialog dialog = RetweetDialog.getInstance(toRetweet);
 		dialog.show(mainActivity.getFragmentManager().beginTransaction(), RetweetDialog.TAG);
 	}
+
 	//------------------------------------------------------------------------------------------------------------------
 	//TODO: потом избавиться от этих методов.
 	@Override

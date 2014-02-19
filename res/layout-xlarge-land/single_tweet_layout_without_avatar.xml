@@ -8,14 +8,26 @@
                 android:background="@drawable/background_single_tweet_selector">
 
 	<TextView
+			android:id="@+id/retweeted_by"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:textAppearance="?android:attr/textAppearanceMedium"
+			android:textColor="@color/tweet_text_color"
+			android:layout_alignParentLeft="true"
+			android:text="@string/text_retweeted_by"
+			android:layout_marginTop="10dp"
+			android:layout_marginLeft="15dp"
+			android:visibility="gone"/>
+
+	<TextView
 			android:id="@+id/username_textview"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@color/tweet_text_color"
 			android:text="@string/text_user_name"
-			android:layout_alignParentTop="true"
 			android:layout_alignParentLeft="true"
+			android:layout_below="@+id/retweeted_by"
 			android:layout_marginLeft="15dp"
 			android:layout_marginTop="10dp"/>
 
@@ -23,7 +35,7 @@
 			android:id="@+id/user_screen_name_textview"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textSize="12sp"
 			android:textColor="@color/screen_name_color"
 			android:text="@string/text_user_screen_name"
@@ -35,7 +47,7 @@
 			android:id="@+id/tweet_date_textview"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@color/tweet_text_color"
 			android:text="@string/text_date"
 			android:layout_above="@+id/user_screen_name_textview"
@@ -46,7 +58,7 @@
 			android:id="@+id/tweet_text_textview"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@color/tweet_text_color"
 			android:text="@string/text"
 			android:autoLink="web"
@@ -55,6 +67,7 @@
 			android:layout_marginTop="5dp"
 			android:layout_marginRight="5dp"
 			android:layout_marginBottom="10dp"/>
+
 	<ImageView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
@@ -63,6 +76,7 @@
 			android:layout_margin="20dp"
 			android:layout_centerHorizontal="true"
 			android:visibility="gone"/>
+
 	<Button
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"

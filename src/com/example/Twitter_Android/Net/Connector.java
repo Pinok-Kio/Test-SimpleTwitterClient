@@ -19,10 +19,9 @@ public class Connector {
 	private static Token requestToken;
 	private static Token accessToken;
 	private static final int ERROR_TOO_MANY_REQUESTS = 429; //HTTP code
-	private static final Connector instance = new Connector();
 	private long cursor;
 
-	private Connector() {
+	public Connector() {
 		parser = new Parser();
 		final String oauth_consumer_key = "0Y11uYXFdtcOtjO7TapGQw";
 		final String oauth_consumer_secret = "fp9Lf8TpN87yd0yq1qiTD32mAdP5Z0Ohf8r6wVMuyeA";
@@ -30,10 +29,6 @@ public class Connector {
 				.apiKey(oauth_consumer_key)
 				.apiSecret(oauth_consumer_secret)
 				.build();
-	}
-
-	public static Connector getInstance() {
-		return instance;
 	}
 
 	//------------------------------AUTHORIZATION-----------------------------------------------------------------------
@@ -102,19 +97,27 @@ public class Connector {
 
 	}
 
-	//------------------------------FOLLOWINGS--------------------------------------------------------------------------
+	//------------------------------FOLLOWINGS/FOLLOWERS----------------------------------------------------------------
 
 	/**
 	 * Get friends (followings) of user specified by id.
 	 *
-	 * @param id user id
+	 * @param id   user id
 	 * @param crsr cursor (see twitter api)
 	 * @return list of followings
 	 * @throws ParseException incorrect data
 	 */
 	public List<Person> getFriends(long id, long crsr) throws ParseException {
 		String address = "https://api.twitter.com/1.1/friends/list.json?cursor=" + crsr
-				+ "&user_id=" + id + "&skip_status=true&include_user_entities=false&count=50";
+				+ "&user_id=" + id + "&skip_status=true&include_user_entities=false&count=100";
+		Response response = connectGet(address);
+		cursor = parser.getNextCursor(response.getBody());
+		return parser.getFriends(response.getBody());
+	}
+
+	public List<Person> getFollowers(long id, long crsr) throws ParseException {
+		String address = "https://api.twitter.com/1.1/followers/list.json?cursor=" + crsr
+				+ "&user_id=" + id + "&skip_status=true&include_user_entities=false&count=100";
 		Response response = connectGet(address);
 		cursor = parser.getNextCursor(response.getBody());
 		return parser.getFriends(response.getBody());
@@ -138,13 +141,11 @@ public class Connector {
 	 * @throws ParseException
 	 */
 	public List<Tweet> getStatuses_HomeTimeline(long max_id, long since_id, int count) throws ParseException {
-		String address = "https://api.twitter.com/1.1/statuses/home_timeline.json";
+		String address = "https://api.twitter.com/1.1/statuses/home_timeline.json?count=" + count;
 		if (since_id != 0) {
-			address += "?since_id=" + since_id;
-		} else if (max_id == 0) {
-			address += "?count=" + count;
-		} else {
-			address += "?count=" + count + "&max_id=" + max_id;
+			address += "&since_id=" + since_id;
+		} else if (max_id != 0) {
+			address += "&max_id=" + max_id;
 		}
 		Response response = connectGet(address);
 		if (response.getCode() == ERROR_TOO_MANY_REQUESTS) {
@@ -171,13 +172,13 @@ public class Connector {
 	 * @throws ParseException
 	 */
 	public List<Tweet> getStatuses_UserTimeline(long userID, long max_id, long since_id, int count) throws ParseException {
-		String address = "https://api.twitter.com/1.1/statuses/user_timeline.json?user_id=";
+		String address = "https://api.twitter.com/1.1/statuses/user_timeline.json?count=" + count + "&user_id=";
 		if (max_id == 0 && since_id == 0) {
-			address += userID + "&count=" + count;
+			address += userID;
 		} else if (since_id == 0) {
-			address += userID + "&count=" + count + "&max_id=" + max_id;
+			address += userID + "&max_id=" + max_id;
 		} else {
-			address += userID + "&count=" + count + "&since_id=" + since_id;
+			address += userID + "&since_id=" + since_id;
 		}
 
 		Response response = connectGet(address);

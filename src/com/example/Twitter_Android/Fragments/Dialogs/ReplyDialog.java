@@ -71,7 +71,7 @@ public class ReplyDialog extends DialogFragment {
 		btnReply.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String text = "@" + tweetToReply.getPerson().getScreenName() + " " + replyText.getText().toString();
+				String text = "@" + tweetToReply.getAuthor().getScreenName() + " " + replyText.getText().toString();
 				long tweetID = tweetToReply.getID();
 				Bundle params = new Bundle();
 				params.putLong(TaskReply.TWEET_ID, tweetID);
@@ -84,7 +84,7 @@ public class ReplyDialog extends DialogFragment {
 
 		Dialog d = getDialog();
 		if (d != null) {
-			d.setTitle(getString(R.string.title_dialog_reply_to) + " " + tweetToReply.getPerson().getName());
+			d.setTitle(getString(R.string.title_dialog_reply_to) + " " + tweetToReply.getAuthor().getName());
 		}
 
 		return v;

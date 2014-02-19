@@ -15,7 +15,11 @@ public class TaskRetweet extends AsyncTask<Long, Void, Boolean> {
 
 	@Override
 	protected Boolean doInBackground(Long... params) {
-		return (params.length > 0) && (Connector.getInstance().retweet(params[0]));
+		if(params.length > 0){
+			final Connector connector = new Connector();
+			return connector.retweet(params[0]);
+		}
+		return false;
 	}
 
 	@Override

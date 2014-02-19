@@ -20,7 +20,6 @@ import com.example.Twitter_Android.AppActivity.ConcreteUserTimelineActivity;
 import com.example.Twitter_Android.AppActivity.SearchableActivity;
 import com.example.Twitter_Android.Fragments.Adapters.TimelineAdapter;
 import com.example.Twitter_Android.Fragments.Adapters.TweetAdapter;
-import com.example.Twitter_Android.Fragments.Dialogs.DirectMessageDialog;
 import com.example.Twitter_Android.Fragments.Dialogs.UserInfoDialog;
 import com.example.Twitter_Android.Loaders.HomeTimelineLoader;
 import com.example.Twitter_Android.Logic.Constants;
@@ -34,7 +33,7 @@ import java.util.List;
 
 public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 	private Activity mainActivity;
-	private static Connector connector;
+	private final Connector connector;
 	private TimelineAdapter<Tweet> currentAdapter;
 	private static final String MAX_ID = "MAX_ID";
 	private static final String SINCE_ID = "SINCE_ID";
@@ -53,11 +52,11 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
+	private HomeTimelineFragment() {
+		connector = new Connector();
+	}
 
 	public static HomeTimelineFragment newInstance() {
-		if (connector == null) {
-			connector = Connector.getInstance();
-		}
 		return instance;
 	}
 
@@ -98,7 +97,7 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		Person selectedTweetAuthor = getItem(position).getPerson();
+		Person selectedTweetAuthor = getItem(position).getAuthor();
 		view.setBackground(getResources().getDrawable(R.drawable.rounded_corners_pressed));
 		Intent intent = new Intent(getActivity(), ConcreteUserTimelineActivity.class);
 		intent.putExtra("PERSON_ID", selectedTweetAuthor.getID());
@@ -210,10 +209,6 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.menu_item_send_message:
-				sendDirectMessage();
-				return true;
-
 			case R.id.menu_item_info:
 				showInfo();
 				return true;
@@ -221,16 +216,10 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 		return super.onOptionsItemSelected(item);
 	}
 
-	private void sendDirectMessage() {
-		Person selectedPerson = getSelectedItem().getPerson();
-		DialogFragment dialog = DirectMessageDialog.getInstance(selectedPerson);
-		dialog.show(mainActivity.getFragmentManager().beginTransaction(), DirectMessageDialog.TAG);
-	}
-
 	private void showInfo() {
 		final Tweet tweet = getSelectedItem();
 		if (tweet != null) {
-			Person person = tweet.getPerson();
+			Person person = tweet.getAuthor();
 			final DialogFragment dialog = UserInfoDialog.newInstance(person);
 			dialog.show(mainActivity.getFragmentManager().beginTransaction(), UserInfoDialog.TAG);
 		}

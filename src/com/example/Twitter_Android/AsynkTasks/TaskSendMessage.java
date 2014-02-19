@@ -11,10 +11,11 @@ public class TaskSendMessage extends AsyncTask<Bundle, Void, Boolean> {
 	@Override
 	protected Boolean doInBackground(Bundle... params) {
 		if (params.length > 0) {
+			final Connector connector = new Connector();
 			Bundle args = params[0];
 			long id = args.getLong(ID, 0);
 			String text = args.getString(TEXT, ";-)");
-			return Connector.getInstance().sendDirectMessage(id, text);
+			return connector.sendDirectMessage(id, text);
 		}
 		return false;
 	}

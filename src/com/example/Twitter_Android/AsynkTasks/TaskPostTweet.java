@@ -31,8 +31,9 @@ public class TaskPostTweet extends AsyncTask<String, Void, Tweet> {
 	@Override
 	protected Tweet doInBackground(String... params) {
 		if (params.length > 0) {
+			final Connector connector = new Connector();
 			try {
-				return Connector.getInstance().postTweet(params[0]);
+				return connector.postTweet(params[0]);
 			} catch (ParseException e) {
 				e.printStackTrace();
 			}

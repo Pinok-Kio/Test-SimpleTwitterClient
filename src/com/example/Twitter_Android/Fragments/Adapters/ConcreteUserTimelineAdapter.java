@@ -10,6 +10,7 @@ import com.example.Twitter_Android.AsynkTasks.ImageDownloader;
 import com.example.Twitter_Android.Fragments.Dialogs.ReplyDialog;
 import com.example.Twitter_Android.Fragments.Dialogs.RetweetDialog;
 import com.example.Twitter_Android.Logic.DataCache;
+import com.example.Twitter_Android.Logic.Person;
 import com.example.Twitter_Android.Logic.Tweet;
 import com.example.Twitter_Android.R;
 
@@ -26,6 +27,7 @@ public class ConcreteUserTimelineAdapter extends TimelineAdapter<Tweet> {
 
 	//------------------------------------------------------------------------------------------------------------------
 	private static class ViewHolder {
+		TextView retweetedBy;
 		TextView name;
 		TextView screenName;
 		TextView date;
@@ -64,6 +66,7 @@ public class ConcreteUserTimelineAdapter extends TimelineAdapter<Tweet> {
 		if (convertView == null) {
 			convertView = layoutInflater.inflate(R.layout.single_tweet_layout_without_avatar, null);
 			holder = new ViewHolder();
+			holder.retweetedBy = (TextView) convertView.findViewById(R.id.retweeted_by);
 			holder.name = (TextView) convertView.findViewById(R.id.username_textview);
 			holder.screenName = (TextView) convertView.findViewById(R.id.user_screen_name_textview);
 			holder.date = (TextView) convertView.findViewById(R.id.tweet_date_textview);
@@ -73,15 +76,22 @@ public class ConcreteUserTimelineAdapter extends TimelineAdapter<Tweet> {
 			holder.buttonReply = (ImageButton) convertView.findViewById(R.id.image_button_reply);
 			holder.buttonRetweet = (ImageButton) convertView.findViewById(R.id.image_button_retweet);
 			holder.buttonFavorite = (ImageButton) convertView.findViewById(R.id.image_button_favorite);
-
 			convertView.setTag(holder);
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
 		final Tweet tweet = getItem(position);
+		Person author = tweet.getAuthor();
 
-		holder.name.setText(tweet.getPerson().getName());
-		holder.screenName.setText("@" + tweet.getPerson().getScreenName());
+		if (tweet.isRetweeted()) {
+			Person p = tweet.retweetedBy();
+			holder.retweetedBy.setText(mainActivity.getString(R.string.text_retweeted_by) + " " + p.getName() + " @" + p.getScreenName());
+			holder.retweetedBy.setVisibility(View.VISIBLE);
+		} else {
+			holder.retweetedBy.setVisibility(View.GONE);
+		}
+		holder.name.setText(author.getName());
+		holder.screenName.setText("@" + author.getScreenName());
 		holder.date.setText(tweet.getCreationTime());
 		holder.text.setText(tweet.getText());
 

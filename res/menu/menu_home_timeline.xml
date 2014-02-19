@@ -9,12 +9,6 @@
 				android:actionViewClass="android.widget.SearchView"/>
 
 		<item
-				android:id="@+id/menu_item_send_message"
-				android:title="@string/text_send_message"
-				android:icon="@drawable/ic_action_edit"
-				android:showAsAction="always"/>
-
-		<item
 				android:id="@+id/menu_item_messages"
 				android:title="@string/menuitem_messages"
 				android:icon="@drawable/ic_action_email"

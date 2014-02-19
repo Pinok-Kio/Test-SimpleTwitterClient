@@ -6,8 +6,6 @@ import com.example.Twitter_Android.Logic.Tweet;
 import com.mass.cmassive.CMassive;
 
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * Абстрактный адаптер для отображения списка твитов или пользователей (и сообщений).
@@ -20,18 +18,15 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 	private long maxID = -1;    //see max_id & since_id in TwitterAPI
 	private long sinceID = -1;
 	private final String TAG;
-	private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-	private final Lock writeLock = lock.writeLock();
 
 	@SuppressWarnings("unchecked")
 	TimelineAdapter(List<? extends T> newItems, String tag) {
-		T[] newArray = (T[]) new Object[newItems.size()];
-		newArray = newItems.toArray(newArray);
-		items = new CMassive<>(newArray);
+		items = new CMassive<>(newItems);
 		TAG = tag;
 		if (newItems.get(0) instanceof Tweet) {
-			sinceID = ((Tweet) newItems.get(0)).getID() + 1;
-			maxID = ((Tweet) items.getItem(items.getDataSize() - 1)).getID() - 1;
+			sinceID = ((Tweet) newItems.get(0)).getID();
+			maxID = ((Tweet) newItems.get(newItems.size() - 1)).getID() - 1;
+			System.out.println("CONSTRUCTOR: maxID=" + maxID + ", sinceID=" + sinceID);
 		}
 	}
 
@@ -61,12 +56,11 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 	 */
 	@SuppressWarnings("unchecked")
 	public void addItemsInstead(List<? extends T> newItems) {
-		T[] newArray = (T[]) new Object[newItems.size()];
-		newArray = newItems.toArray(newArray);
-		items = new CMassive<>(newArray);
-		if (items.getItem(0) instanceof Tweet) {
-			sinceID = ((Tweet) items.getItem(0)).getID() + 1;
-			maxID = ((Tweet) items.getItem(items.getDataSize())).getID() - 1;
+		items = new CMassive<>(newItems);
+		if (newItems.get(0) instanceof Tweet) {
+			sinceID = ((Tweet) newItems.get(0)).getID();
+			maxID = ((Tweet) newItems.get(newItems.size() - 1)).getID() - 1;
+			System.out.println("addItemsInstead: maxID=" + maxID + ", sinceID=" + sinceID);
 		}
 		notifyDataSetChanged();
 	}
@@ -78,16 +72,13 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 	 */
 	@SuppressWarnings("unchecked")
 	public void addItemsToTop(List<? extends T> newItems) {
-		T[] tmp = (T[]) new Object[newItems.size()];
-		tmp = newItems.toArray(tmp);
-		writeLock.tryLock();
-		try {
-			items.insertToStart(tmp);
-		} finally {
-			writeLock.unlock();
-		}
+		items.insertToStart(newItems);
 		if (newItems.get(0) instanceof Tweet) {
-			sinceID = ((Tweet) items.getItem(0)).getID() + 1;
+			sinceID = ((Tweet) newItems.get(0)).getID();
+			System.out.println("addItemsToTop: maxID=" + maxID +
+					" sinceID=" + sinceID +
+					" tmp[0]=" + (((Tweet) newItems.get(0)).getID()) +
+					" tmp[last]=" + (((Tweet) newItems.get(newItems.size() - 1)).getID()) + " mewItems.size=" + newItems.size());
 		}
 		notifyDataSetChanged();
 	}
@@ -99,16 +90,10 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 	 */
 	@SuppressWarnings("unchecked")
 	public void addItemsToBottom(List<? extends T> newItems) {
-		T[] tmp = (T[]) new Object[newItems.size()];
-		tmp = newItems.toArray(tmp);
-		writeLock.tryLock();
-		try {
-			items.insertToEnd(tmp);
-		} finally {
-			writeLock.unlock();
-		}
+		items.insertToEnd(newItems);
 		if (newItems.get(0) instanceof Tweet) {
-			maxID = ((Tweet) items.getItem(items.getDataSize() - 1)).getID() - 1;
+			maxID = ((Tweet) newItems.get(newItems.size() - 1)).getID() - 1;
+			System.out.println("addItemsToBottom: maxID=" + maxID + ", sinceID=" + sinceID);
 		}
 		notifyDataSetChanged();
 	}
@@ -148,11 +133,11 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
-	public long getMaxID() {
+	public synchronized long getMaxID() {
 		return maxID;
 	}
 
-	public long getSinceID() {
+	public synchronized long getSinceID() {
 		return sinceID;
 	}
 	//------------------------------------------------------------------------------------------------------------------

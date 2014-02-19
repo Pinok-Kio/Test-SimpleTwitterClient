@@ -39,7 +39,7 @@ public class RetweetDialog extends DialogFragment {
 		final TextView screenName = (TextView) v.findViewById(R.id.user_screen_name_textview);
 		final TextView text = (TextView) v.findViewById(R.id.tweet_text_textview);
 
-		final Person person = tweet.getPerson();
+		final Person person = tweet.getAuthor();
 		final Bitmap bitmapAvatar = DataCache.getInstance().getImage(person.getProfileImage());
 		if (bitmapAvatar == null) {
 			avatar.setImageDrawable(getResources().getDrawable(R.drawable.ic_noavatar));

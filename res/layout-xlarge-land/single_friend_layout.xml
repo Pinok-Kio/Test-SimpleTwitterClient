@@ -8,21 +8,21 @@
                 android:background="@drawable/background_single_tweet_selector">
 
 	<ImageView
-			android:layout_width="50dp"
-			android:layout_height="50dp"
+			android:layout_width="80dp"
+			android:layout_height="80dp"
 			android:id="@+id/friend_avatar_imageview"
 			android:layout_alignParentLeft="true"
 			android:layout_marginLeft="20dp"
 			android:layout_marginRight="20dp"
 			android:layout_centerInParent="true"
 			android:src="@drawable/no_avatar_green"
-			android:contentDescription="Friend personal Avatar"/>
+			android:contentDescription="@string/text_content_description"/>
 
 	<ImageView
-			android:layout_width="60dp"
-			android:layout_height="60dp"
+			android:layout_width="88dp"
+			android:layout_height="88dp"
 			android:layout_alignParentLeft="true"
-			android:layout_marginLeft="15dp"
+			android:layout_marginLeft="16dp"
 			android:layout_centerInParent="true"
 			android:src="@drawable/shape_for_imageview"/>
 
@@ -51,7 +51,7 @@
 	<TextView
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@color/tweet_text_color"
 			android:text="@string/text_from"
 			android:id="@+id/friend_from_textview"
@@ -63,7 +63,7 @@
 			android:id="@+id/friend_info_textview"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:textAppearance="?android:attr/textAppearanceSmall"
+			android:textAppearance="?android:attr/textAppearanceMedium"
 			android:textColor="@color/tweet_text_color"
 			android:text="@string/text"
 			android:layout_marginTop="10dp"

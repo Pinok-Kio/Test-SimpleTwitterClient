@@ -10,13 +10,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FollowingsLoader extends TweetLoader<Person> {
-	private final Connector connector;
 	private final long cursor;
+	private final Connector connector;
 
 	//------------------------------------------------------------------------------------------------------------------
-	public FollowingsLoader(Context context, long cursor) {
+	public FollowingsLoader(Context context, Connector c, long cursor) {
 		super(context);
-		connector = Connector.getInstance();
+		connector = c;
 		this.cursor = cursor;
 	}
 

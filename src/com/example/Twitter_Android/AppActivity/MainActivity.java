@@ -1,9 +1,7 @@
 package com.example.Twitter_Android.AppActivity;
 
 import android.app.*;
-import android.content.ComponentName;
 import android.content.ContentValues;
-import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
@@ -12,15 +10,14 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Display;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.*;
-import com.example.Twitter_Android.Fragments.ConnectedUserTimelineFragment;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.Toast;
+import com.example.Twitter_Android.Fragments.*;
 import com.example.Twitter_Android.Fragments.Dialogs.ErrorDialog;
-import com.example.Twitter_Android.Fragments.FollowingsFragment;
-import com.example.Twitter_Android.Fragments.HomeTimelineFragment;
-import com.example.Twitter_Android.Fragments.TimelineFragment;
 import com.example.Twitter_Android.Logic.AppDatabase;
 import com.example.Twitter_Android.Logic.DataCache;
 import com.example.Twitter_Android.Logic.FileWorker;
@@ -39,12 +36,11 @@ import java.util.concurrent.Executors;
 
 public class MainActivity extends Activity implements ActionBar.TabListener {
 	private final Connector connector;
-	//	private Fragment currentFragment;   //Фрагмент, показываемый в данный момент.
-	private int currentSelectedTab;
-	private int screenSize;
+	private int screenSize;                     //normal? large? xlarge?
+	private TimelineFragment currentFragment;   //Right side fragment
 
 	public MainActivity() {
-		connector = Connector.getInstance();
+		connector = new Connector();
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -72,7 +68,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		}
 	}
 
-	//------------------------------------------------------------------------------------------------------------------
+	//--------------------AUTHORIZATION---------------------------------------------------------------------------------
 
 	/**
 	 * Button для авторизации из layout_enter_auth_code.xml
@@ -101,9 +97,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		}
 	}
 
-	/*
-	    Открываем в браузере страницу для авторизации.
-	 */
 	private void openAuthPage() {
 		String authURL = "";
 		final ExecutorService exec = Executors.newSingleThreadExecutor();
@@ -128,9 +121,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		startActivity(openAuthPage);
 	}
 
-	/*
-		Вводим код авторизации, получаем и сохраняем токен.
-	 */
 	private void enterCode() throws ExecutionException, InterruptedException {
 		final EditText et = (EditText) findViewById(R.id.enter_code_editText);
 		final String code = et.getText().toString().trim();
@@ -151,23 +141,18 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		}
 	}
 
-	/*
-		Закончили авторизацию. Устанавливаем правильный внешний вид, табы и начинаем загрузку твитов.
-	 */
 	private void authorizationEnded() {
 		setContentView(R.layout.main_screen_layout);
-		setScreenSize();
+		setScreenSizePix();
 		getMyUID();
-		setTabs();
 		startDataLoading();
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
 	/**
-	 * Define max image sizes for showing images.
-	 * For high resolution screen will show images in higher resolution.
+	 * Define max image width for showing images.
 	 */
-	private void setScreenSize() {
+	private void setScreenSizePix() {
 		DataCache cache = DataCache.getInstance();
 		Display display = getWindowManager().getDefaultDisplay();
 		Point size = new Point();
@@ -177,35 +162,14 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	//------------------------------------------------------------------------------------------------------------------
 
 	private void startDataLoading() {
-		/*
-			Этот фрагмент показываем в любом случае.
-		 */
-		TimelineFragment fragment = HomeTimelineFragment.newInstance();
-		showFragment(fragment, HomeTimelineFragment.TAG);
-		/*
-			Если ландшафтное положение экрана - выбираем, что показывать, в зависимости от размеров экрана.
-			TODO: доделать экраны.
-		 */
-		if (isLandscapeOrientation()) {
-			Configuration configuration = getResources().getConfiguration();
-			switch (configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) {
-				case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-					System.out.println("SCREENLAYOUT_SIZE_NORMAL");
-					break;
-				case Configuration.SCREENLAYOUT_SIZE_LARGE:
-					System.out.println("SCREENLAYOUT_SIZE_LARGE");
-					Fragment followingsFragment = FollowingsFragment.getInstance();
-					showFragment(followingsFragment, FollowingsFragment.TAG);
-					break;
-				case Configuration.SCREENLAYOUT_SIZE_XLARGE:
-					System.out.println("SCREENLAYOUT_SIZE_XLARGE");
-					screenSize = Configuration.SCREENLAYOUT_SIZE_XLARGE;
-					showMyTweets();
-					break;
-				default:
-					break;
-			}
+		Configuration configuration = getResources().getConfiguration();
+		screenSize = configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
+
+		if (isLandscapeOrientation() && screenSize != Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+			showHomeTimeline();
 		}
+
+		setTabs();
 	}
 
 	/**
@@ -319,19 +283,17 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	//------------------------------------------------------------------------------------------------------------------
 	private void setTabs() {
 		ActionBar aBar = getActionBar();
-		Configuration configuration = getResources().getConfiguration();
 		if (aBar != null) {
-			switch (configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) {
-				case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-					ActionBar.Tab tabHome = aBar.newTab().setText(R.string.menuitem_home_timeline).setTabListener(this);
-					aBar.addTab(tabHome);
-					break;
+			if (screenSize == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+				ActionBar.Tab tabHome = aBar.newTab().setText(R.string.menuitem_home_timeline).setTabListener(this);
+				aBar.addTab(tabHome);
 			}
-			ActionBar.Tab tabFriends = aBar.newTab().setText(R.string.menuitem_friends).setTabListener(this);
 			ActionBar.Tab tabMyTweets = aBar.newTab().setText(R.string.menuitem_my_tweets).setTabListener(this);
-			aBar.addTab(tabFriends);
+			ActionBar.Tab tabFriends = aBar.newTab().setText(R.string.menuitem_friends).setTabListener(this);
+			ActionBar.Tab tabFollowers = aBar.newTab().setText(R.string.menuitem_my_followers).setTabListener(this);
 			aBar.addTab(tabMyTweets);
-
+			aBar.addTab(tabFriends);
+			aBar.addTab(tabFollowers);
 			aBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 		}
 	}
@@ -343,19 +305,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_item_messages:
-				//Пока так, TODO: нужно сделать активити или диалог для работы с сообщениями.
-				Executors.newCachedThreadPool().execute(new Runnable() {
-					@Override
-					public void run() {
-						try {
-							connector.getReceivedMessages(0, 0, 10);
-						} catch (ParseException e) {
-							e.printStackTrace();
-						} catch (java.text.ParseException e) {
-							e.printStackTrace();
-						}
-					}
-				});
 				Toast.makeText(this, "NEED TO CREATE MESSAGE DIALOG/ACTIVITY", Toast.LENGTH_LONG).show();
 				return true;
 
@@ -394,16 +343,10 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	 * @param tag      fragment tag
 	 */
 	private void showFragmentInRightPlace(FragmentTransaction ft, Fragment fragment, String tag) {
-		switch (getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) {
-			case Configuration.SCREENLAYOUT_SIZE_NORMAL:
-				ft.replace(R.id.frame_layout_timeline, fragment, tag);
-				break;
-			case Configuration.SCREENLAYOUT_SIZE_LARGE:
-				ft.replace(R.id.frame_layout_other_fragments, fragment, tag);
-				break;
-			case Configuration.SCREENLAYOUT_SIZE_XLARGE:
-				ft.replace(R.id.frame_layout_other_fragments, fragment, tag);
-				break;
+		if (screenSize == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+			ft.replace(R.id.frame_layout_timeline, fragment, tag);
+		} else {
+			ft.replace(R.id.frame_layout_other_fragments, fragment, tag);
 		}
 		ft.commit();
 	}
@@ -415,6 +358,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		if (followingsFragment == null) {
 			followingsFragment = FollowingsFragment.getInstance();
 		}
+		currentFragment = followingsFragment;
 		showFragment(followingsFragment, FollowingsFragment.TAG);
 	}
 	//------------------------------------------------------------------------------------------------------------------
@@ -425,7 +369,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		if (myTweets == null) {
 			myTweets = ConnectedUserTimelineFragment.getInstance();
 		}
-
+		currentFragment = myTweets;
 		showFragment(myTweets, ConnectedUserTimelineFragment.TAG);
 	}
 
@@ -435,7 +379,20 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		if (homeTimelineFragment == null) {
 			homeTimelineFragment = HomeTimelineFragment.newInstance();
 		}
+		if (screenSize == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+			currentFragment = homeTimelineFragment;
+		}
 		showFragment(homeTimelineFragment, HomeTimelineFragment.TAG);
+	}
+
+	private void showMyFollowers() {
+		TimelineFragment myFollowers = (FollowersFragment) getFragmentManager().findFragmentByTag(FollowersFragment.TAG);
+		if (myFollowers == null) {
+			myFollowers = FollowersFragment.getInstance();
+		}
+		currentFragment = myFollowers;
+		showFragment(myFollowers, FollowersFragment.TAG);
+
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -446,24 +403,22 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
 	@Override
 	public void onTabSelected(ActionBar.Tab tab, FragmentTransaction ft) {
-		currentSelectedTab = tab.getPosition();
+		int currentSelectedTab = tab.getPosition();
+		if (isLandscapeOrientation() && screenSize != Configuration.SCREENLAYOUT_SIZE_NORMAL) {
+			currentSelectedTab++;
+		}
 		switch (currentSelectedTab) {
 			case 0:
-				if (screenSize == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
-					showHomeTimeline();
-				} else {
-					showFriends();
-				}
+				showHomeTimeline();
 				break;
 			case 1:
-				if (screenSize == Configuration.SCREENLAYOUT_SIZE_NORMAL) {
-					showFriends();
-				} else {
-					showMyTweets();
-				}
+				showMyTweets();
 				break;
 			case 2:
-				showMyTweets();
+				showFriends();
+				break;
+			case 3:
+				showMyFollowers();
 				break;
 		}
 	}
@@ -478,25 +433,11 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	 */
 	@Override
 	public void onTabReselected(ActionBar.Tab tab, FragmentTransaction ft) {
-//		TimelineFragment fragment = null;
-//		switch (currentSelectedTab) {
-//			case 0:
-//				fragment = (TimelineFragment) getFragmentManager().findFragmentByTag(HomeTimelineFragment.TAG);
-//				break;
-//			case 1:
-//				fragment = (TimelineFragment) getFragmentManager().findFragmentByTag(FollowingsFragment.TAG);
-//				break;
-//			case 2:
-//				fragment = (TimelineFragment) getFragmentManager().findFragmentByTag(ConnectedUserTimelineFragment.TAG);
-//				break;
-//		}
-//		if (fragment != null) {
-//			ListView lv = fragment.getListView();
-//			if (lv != null) {
-//				lv.setSelection(0);
-//			}
-//		}
+		if (currentFragment != null && currentFragment.isVisible()) {
+			ListView lv = currentFragment.getListView();
+			if (lv != null) {
+				lv.setSelection(0);
+			}
+		}
 	}
-	//------------------------------------------------------------------------------------------------------------------
-
 }

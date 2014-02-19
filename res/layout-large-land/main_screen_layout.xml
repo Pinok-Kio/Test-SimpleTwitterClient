@@ -29,7 +29,7 @@
 	</LinearLayout>
 
 	<FrameLayout
-			android:id="@+id/frame_layout_for_different_fragments"
+			android:id="@+id/frame_layout_other_fragments"
 			android:layout_width="0dp"
 			android:layout_height="match_parent"
 			android:layout_weight="1">

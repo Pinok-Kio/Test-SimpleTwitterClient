@@ -33,6 +33,7 @@
 	<string name="text_remove_tweet">Remove tweet</string>
 	<string name="text_information">User info</string>
 	<string name="text_content_description">User avatar image</string>
+	<string name="text_retweeted_by">Retweeted by:</string>
 
 	<string name="pref_image_loading">Allow loading images</string>
 	<string name="pref_image_loading_summary">Loading images like user avatars automatically</string>
@@ -40,13 +41,14 @@
 	<string name="pref_tweet_potion_summary">Number of tweets for loading for one time</string>
 	<string name="pref_title">Loading settings</string>
 
-	<string name="dialog_tweet_length">Tweet size:</string>
+	<string name="dialog_tweet_length">Tweet length:</string>
 
 	<string name="search_hint">Search something</string>
 
 	<string name="menuitem_friends">I follow</string>
 	<string name="menuitem_home_timeline">Home</string>
 	<string name="menuitem_my_tweets">My tweets</string>
+	<string name="menuitem_my_followers">My followers</string>
 	<string name="menuitem_messages">Messaging</string>
 
 	<string name="btn_ok">OK</string>

@@ -34,8 +34,8 @@ public class FollowingsListAdapter extends TimelineAdapter<Person> {
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
-	public FollowingsListAdapter(Activity activity, List<? extends Person> persons) {
-		super(persons, TAG);
+	public FollowingsListAdapter(Activity activity, List<? extends Person> persons, String tag) {
+		super(persons, tag);
 		layoutInflater = LayoutInflater.from(activity);
 		imageDownloader = new ImageDownloader();
 		cache = DataCache.getInstance();

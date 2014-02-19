@@ -15,7 +15,6 @@ import com.example.Twitter_Android.Logic.Constants;
 import com.example.Twitter_Android.Logic.DataCache;
 import com.example.Twitter_Android.Fragments.Adapters.TimelineAdapter;
 import com.example.Twitter_Android.Fragments.Adapters.ConcreteUserTimelineAdapter;
-import com.example.Twitter_Android.Fragments.Dialogs.DirectMessageDialog;
 import com.example.Twitter_Android.Logic.Person;
 import com.example.Twitter_Android.Logic.Tweet;
 import com.example.Twitter_Android.R;
@@ -163,7 +162,7 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		currentPerson = getItem(position).getPerson();
+		currentPerson = getItem(position).getAuthor();
 		imageDownloader.loadBitmap(currentPerson.getProfileImage(), avatar);
 		final long selectedUserId = currentPerson.getID();
 		Bundle args = new Bundle();
@@ -178,27 +177,16 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
-			case R.id.menu_item_send_message:
-				sendMessage();
-				return true;
-
 			case R.id.menu_item_info:
 				showInfo();
 				return true;
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-	private void sendMessage() {
-		DirectMessageDialog dialog = DirectMessageDialog.getInstance(currentPerson);
-		dialog.show(mainActivity.getFragmentManager().beginTransaction(), DirectMessageDialog.TAG);
-	}
-
 	private void showInfo() {
 		final Tweet tweet = getSelectedItem();
 		if (tweet != null) {
-			Person person = tweet.getPerson();
-			System.out.println("INFO = " + person);
+			Person person = tweet.getAuthor();
 			final DialogFragment dialog = UserInfoDialog.newInstance(person);
 			dialog.show(mainActivity.getFragmentManager().beginTransaction(), UserInfoDialog.TAG);
 		}

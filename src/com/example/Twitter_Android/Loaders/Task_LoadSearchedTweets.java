@@ -20,8 +20,7 @@ public class Task_LoadSearchedTweets extends TweetLoader<Tweet> {
 
 	@Override
 	public List<? extends Tweet> loadInBackground() {
-		final Connector connector = Connector.getInstance();
-
+		final Connector connector = new Connector();
 		List<? extends Tweet> loadedTweets = new ArrayList<>();
 		try {
 			loadedTweets = connector.findTweets(toFind, RESULT_COUNT);
