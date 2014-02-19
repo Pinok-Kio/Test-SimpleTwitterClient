@@ -1,5 +1,7 @@
 package com.mass.cmassive;
 
+import java.util.List;
+
 public class CMassive<T> {
 	private T[] massive;
 	private int fullSize;
@@ -8,64 +10,75 @@ public class CMassive<T> {
 	private int start;
 	private int end;
 	private final int resizeFactor = 2;
-	private final int MIN_SIZE = 20;
+	private final int MIN_SIZE = 50;
+	private static final Object lock = new Object();
 
 	@SuppressWarnings("unchecked")
-	public CMassive(int initSize) {
-		fullSize = initSize;
+	public CMassive(List<? extends T> other) {
+		fullSize = (other.size() < MIN_SIZE) ? (other.size() * resizeFactor + MIN_SIZE) : (other.size() * resizeFactor);
 		massive = (T[]) new Object[fullSize];
-		availableSize = initSize;
-	}
-
-	@SuppressWarnings("unchecked")
-	public CMassive(T[] other) {
-		fullSize = (other.length < MIN_SIZE) ? (other.length * resizeFactor + MIN_SIZE) : (other.length * resizeFactor);
-
-		massive = (T[]) new Object[fullSize];
-		System.arraycopy(other, 0, massive, 0, other.length);
-		dataSize = other.length;
-		availableSize = fullSize - dataSize;
-		end = other.length - 1;
-	}
-
-	public T[] insertToEnd(T[] other) {
-		if (other.length + 1 > availableSize) {
-			massive = resize(other.length);
+		T[] otherAsArray = (T[]) new Object[other.size()];
+		synchronized (lock) {
+			otherAsArray = other.toArray(otherAsArray);
+			System.arraycopy(otherAsArray, 0, massive, 0, otherAsArray.length);
+			dataSize = otherAsArray.length;
+			availableSize = fullSize - dataSize;
+			end = otherAsArray.length - 1;
 		}
-		System.arraycopy(other, 0, massive, end + 1, other.length);
-		dataSize += other.length;
-		end += other.length;
-		availableSize -= other.length;
+	}
+
+	@SuppressWarnings("unchecked")
+	public T[] insertToEnd(List<? extends T> other) {
+		if (other.size() + 1 > availableSize) {
+			massive = resize(other.size());
+		}
+		T[] otherAsArray = (T[]) new Object[other.size()];
+		synchronized (lock) {
+			otherAsArray = other.toArray(otherAsArray);
+			System.arraycopy(otherAsArray, 0, massive, end + 1, otherAsArray.length);
+			dataSize += otherAsArray.length;
+			end += otherAsArray.length;
+			availableSize -= otherAsArray.length;
+		}
 		return massive;
 	}
 
-	public T[] insertToStart(T[] other) {
-		if (other.length + 1 > availableSize) {
-			massive = resize(other.length);
+	@SuppressWarnings("unchecked")
+	public T[] insertToStart(List<? extends T> other) {
+		if (other.size() + 1 > availableSize) {
+			massive = resize(other.size());
 		}
-
-		start = (start > end) ? (start - 1) : (fullSize - other.length);
-
-		System.arraycopy(other, 0, massive, start, other.length);
-		availableSize -= other.length;
-		dataSize += other.length;
+		T[] otherAsArray = (T[]) new Object[other.size()];
+		synchronized (lock) {
+			otherAsArray = other.toArray(otherAsArray);
+			start = (start > end) ? (start - otherAsArray.length) : (fullSize - otherAsArray.length);
+			System.arraycopy(otherAsArray, 0, massive, start, otherAsArray.length);
+			availableSize -= otherAsArray.length;
+			dataSize += otherAsArray.length;
+		}
 		return massive;
 	}
 
 	@SuppressWarnings("unchecked")
 	private T[] resize(int size) {
-		fullSize *= resizeFactor;
-		fullSize += size;
-		T[] biggerMassive = (T[]) new Object[fullSize];
+		final int biggerMassiveSize = fullSize * resizeFactor + size;
+		T[] biggerMassive = (T[]) new Object[biggerMassiveSize];
 		if (start > end) {
-			System.arraycopy(massive, start, biggerMassive, 0, (fullSize - start));
-			System.arraycopy(massive, 0, biggerMassive, (fullSize - start), end + 1);
+			synchronized (lock) {
+				System.arraycopy(massive, start, biggerMassive, 0, (fullSize - start));
+				System.arraycopy(massive, 0, biggerMassive, (fullSize - start), end + 1);
+			}
 		} else {
-			System.arraycopy(massive, 0, biggerMassive, 0, dataSize);
+			synchronized (lock) {
+				System.arraycopy(massive, 0, biggerMassive, 0, dataSize);
+			}
 		}
-		start = 0;
-		end = dataSize - 1;
-		availableSize = fullSize - dataSize;
+		synchronized (lock) {
+			fullSize = biggerMassiveSize;
+			start = 0;
+			end = dataSize - 1;
+			availableSize = fullSize - dataSize;
+		}
 
 		return biggerMassive;
 	}
@@ -83,18 +96,24 @@ public class CMassive<T> {
 		} else if (start > end) {
 			if ((massive.length - start) > position) {
 				position += start;
-				System.arraycopy(massive, start, massive, start + 1, position - start);
-				massive[start] = null;
+				synchronized (lock) {
+					System.arraycopy(massive, start, massive, start + 1, position - start);
+					massive[start] = null;
+				}
 				start++;
 			} else {
 				position -= (massive.length - start);
-				System.arraycopy(massive, position + 1, massive, position, end - position - 1);
-				massive[end] = null;
+				synchronized (lock) {
+					System.arraycopy(massive, position + 1, massive, position, end - position - 1);
+					massive[end] = null;
+				}
 				end--;
 			}
 		} else {
-			System.arraycopy(massive, position + 1, massive, position, end - position - 1);
-			massive[end] = null;
+			synchronized (lock) {
+				System.arraycopy(massive, position + 1, massive, position, end - position - 1);
+				massive[end] = null;
+			}
 			end--;
 		}
 		availableSize++;
@@ -110,7 +129,7 @@ public class CMassive<T> {
 		return removeItem(position);
 	}
 
-	private int findPosition(T item) {
+	private synchronized int findPosition(T item) {
 		int position = 0;
 		if (start < end) {
 			for (int i = 0; i <= end; i++) {
@@ -134,7 +153,7 @@ public class CMassive<T> {
 		return -1;
 	}
 
-	public T getItem(int position) {
+	public synchronized T getItem(int position) {
 		if (start == fullSize) {
 			start = 0;
 		}
@@ -144,7 +163,7 @@ public class CMassive<T> {
 		if (position == 0) {
 			return massive[start];
 		}
-		if (position == dataSize) {
+		if (position == dataSize - 1) {
 			return massive[end];
 		}
 		if (start > end) {
@@ -160,21 +179,21 @@ public class CMassive<T> {
 		}
 	}
 
-	public void show() {
-		System.out.println("SHOW START=" + start + " END=" + end + " FULLSIZE=" + fullSize + " DATASIZE=" + dataSize + " AVAILABLESIZE=" + availableSize);
-		if (start >= end) {
-			for (int i = start; i < massive.length; i++) {
-				System.out.print(massive[i] + " ");
-			}
-			for (int i = 0; i < end; i++) {
-				System.out.print(massive[i] + " ");
-			}
-		} else {
-			for (int i = 0; i < end; i++) {
-				System.out.print(massive[i] + " ");
-			}
-		}
-	}
+//	public void show() {
+//		System.out.println("SHOW START=" + start + " END=" + end + " FULLSIZE=" + fullSize + " DATASIZE=" + dataSize + " AVAILABLESIZE=" + availableSize);
+//		if (start >= end) {
+//			for (int i = start; i < massive.length; i++) {
+//				System.out.print(massive[i] + " ");
+//			}
+//			for (int i = 0; i < end; i++) {
+//				System.out.print(massive[i] + " ");
+//			}
+//		} else {
+//			for (int i = 0; i < end; i++) {
+//				System.out.print(massive[i] + " ");
+//			}
+//		}
+//	}
 
 	public int getDataSize() {
 		return dataSize;
