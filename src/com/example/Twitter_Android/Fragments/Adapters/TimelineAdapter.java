@@ -26,7 +26,7 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 		if (newItems.get(0) instanceof Tweet) {
 			sinceID = ((Tweet) newItems.get(0)).getID();
 			maxID = ((Tweet) newItems.get(newItems.size() - 1)).getID() - 1;
-			System.out.println("CONSTRUCTOR: maxID=" + maxID + ", sinceID=" + sinceID);
+			System.out.println("CONSTRUCTOR sinceID=" + sinceID + " maxID=" + maxID);
 		}
 	}
 
@@ -46,7 +46,6 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 	public long getItemId(int position) {
 		return items.getItem(position).hashCode();
 	}
-
 	//------------------------------------------------------------------------------------------------------------------
 
 	/**
@@ -60,7 +59,6 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 		if (newItems.get(0) instanceof Tweet) {
 			sinceID = ((Tweet) newItems.get(0)).getID();
 			maxID = ((Tweet) newItems.get(newItems.size() - 1)).getID() - 1;
-			System.out.println("addItemsInstead: maxID=" + maxID + ", sinceID=" + sinceID);
 		}
 		notifyDataSetChanged();
 	}
@@ -75,11 +73,8 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 		items.insertToStart(newItems);
 		if (newItems.get(0) instanceof Tweet) {
 			sinceID = ((Tweet) newItems.get(0)).getID();
-			System.out.println("addItemsToTop: maxID=" + maxID +
-					" sinceID=" + sinceID +
-					" tmp[0]=" + (((Tweet) newItems.get(0)).getID()) +
-					" tmp[last]=" + (((Tweet) newItems.get(newItems.size() - 1)).getID()) + " mewItems.size=" + newItems.size());
 		}
+		System.out.println("addItemsToTop sinceID=" + sinceID + " maxID=" + maxID);
 		notifyDataSetChanged();
 	}
 
@@ -93,8 +88,9 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 		items.insertToEnd(newItems);
 		if (newItems.get(0) instanceof Tweet) {
 			maxID = ((Tweet) newItems.get(newItems.size() - 1)).getID() - 1;
-			System.out.println("addItemsToBottom: maxID=" + maxID + ", sinceID=" + sinceID);
 		}
+		System.out.println("addItemsToBottom sinceID=" + sinceID + " maxID=" + maxID + " loadedMaxId=" + (((Tweet) newItems.get(newItems.size() - 1)).getID() - 1) + " loadedSinceId=" + (((Tweet) newItems.get(0)).getID()));
+
 		notifyDataSetChanged();
 	}
 
@@ -133,11 +129,11 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
-	public synchronized long getMaxID() {
+	public long getMaxID() {
 		return maxID;
 	}
 
-	public synchronized long getSinceID() {
+	public long getSinceID() {
 		return sinceID;
 	}
 	//------------------------------------------------------------------------------------------------------------------

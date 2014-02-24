@@ -45,23 +45,20 @@ class Parser {
 		Object parsedString = parser.parse(str);
 		JSONArray jsonArray = (JSONArray) parsedString;
 		List<Tweet> tweets = new ArrayList<>();
-		boolean isRetweeted = false;
 		for (JSONObject arrayValue : (Iterable<JSONObject>) jsonArray) {
 			Tweet tweet;
 			JSONObject retweeted = (JSONObject) arrayValue.get("retweeted_status");    //Проверка, это твит или ретвит?
 			if (retweeted != null) {
-				isRetweeted = true;
 				//Это ретвит, будем показывать оригинального автора.
 				tweet = getSingleTweet(retweeted);
-			} else {
-				isRetweeted = false;
-				//Это не ретвит.
-				tweet = getSingleTweet(arrayValue);
-			}
-			if(isRetweeted){
 				JSONObject user = (JSONObject) arrayValue.get("user");
 				Person retweetedBy = getPerson(user);
 				tweet.setRetweetedBy(retweetedBy);
+				long afterRetweetID = (long) arrayValue.get("id");
+				tweet.setIdAfterRetweet(afterRetweetID);
+			} else {
+				//Это не ретвит.
+				tweet = getSingleTweet(arrayValue);
 			}
 			tweets.add(tweet);
 		}

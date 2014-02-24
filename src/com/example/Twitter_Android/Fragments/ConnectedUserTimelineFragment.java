@@ -2,6 +2,7 @@ package com.example.Twitter_Android.Fragments;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.LoaderManager;
 import android.content.Loader;
 import android.os.Bundle;
 import android.view.Menu;
@@ -9,7 +10,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Toast;
 import com.example.Twitter_Android.Fragments.Adapters.TimelineAdapter;
 import com.example.Twitter_Android.Fragments.Adapters.TweetAdapter;
 import com.example.Twitter_Android.Fragments.Dialogs.DeleteTweetDialog;
@@ -24,7 +24,6 @@ import com.example.Twitter_Android.R;
 import java.util.List;
 
 public class ConnectedUserTimelineFragment extends TimelineFragment<Tweet> {
-	private Activity mainActivity;
 	private TimelineAdapter<Tweet> currentAdapter;
 	private static final DataCache cache;
 
@@ -51,7 +50,6 @@ public class ConnectedUserTimelineFragment extends TimelineFragment<Tweet> {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		mainActivity = activity;
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -67,10 +65,13 @@ public class ConnectedUserTimelineFragment extends TimelineFragment<Tweet> {
 			 */
 			currentAdapter = (TweetAdapter) cache.getAdapter(ADAPTER_TAG);
 			if (currentAdapter == null) {
-				mainActivity.getLoaderManager().initLoader(TIMELINE_LOADER_ID, null, this);
+				LoaderManager loaderManager = getLoaderManager();
+				if (loaderManager != null) {
+					loaderManager.initLoader(TIMELINE_LOADER_ID, null, this);
+				}
 			} else {
 				setListAdapter(currentAdapter);
-				currentAdapter.updateContext(mainActivity);
+				currentAdapter.updateContext(getActivity());
 			}
 		} else {
 			/*
@@ -79,7 +80,7 @@ public class ConnectedUserTimelineFragment extends TimelineFragment<Tweet> {
 				Иначе возникает ошибка вида "java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState",
 				когда диалог пытается отобразиться в сохраненной (а не в текущей) активити.
 			 */
-			currentAdapter.updateContext(mainActivity);
+			currentAdapter.updateContext(getActivity());
 		}
 		needNewestTweet = false;
 	}
@@ -89,18 +90,17 @@ public class ConnectedUserTimelineFragment extends TimelineFragment<Tweet> {
 		long maxID = getMaxId();
 		Bundle args = new Bundle();
 		args.putLong(MAX_ID, maxID);
-		mainActivity.getLoaderManager().restartLoader(OLD_TWEETS_LOADER, args, this);
+		LoaderManager loaderManager = getLoaderManager();
+		if (loaderManager != null) {
+			loaderManager.restartLoader(OLD_TWEETS_LOADER, args, this);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
 	public Loader<List<? extends Tweet>> onCreateLoader(int id, Bundle args) {
-		/*
-			Если мы уже загрузили все твиты, которые уже написали, то больше даже не будем пытаться создать loader,
-			ведь новые твиты мы будем просто добавлять в адаптер.
-		 */
-		return new UserTimelineLoader(mainActivity, cache.getConnectedUserID(), 0, 0);
+		return new UserTimelineLoader(getActivity(), cache.getConnectedUserID(), 0, 0);
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public class ConnectedUserTimelineFragment extends TimelineFragment<Tweet> {
 			switch (loader.getId()) {
 				case TIMELINE_LOADER_ID:
 					if (currentAdapter == null) {
-						currentAdapter = new TweetAdapter(mainActivity, data, ADAPTER_TAG);
+						currentAdapter = new TweetAdapter(getActivity(), data, ADAPTER_TAG);
 						setListAdapter(currentAdapter);
 					}
 					break;
@@ -135,9 +135,15 @@ public class ConnectedUserTimelineFragment extends TimelineFragment<Tweet> {
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		Tweet tweetToReply = getItem(position);
-		DialogFragment dialogFragment = ReplyDialog.getInstance(tweetToReply);
-		dialogFragment.show(mainActivity.getFragmentManager().beginTransaction(), ReplyDialog.TAG);
-		return true;
+		if (tweetToReply != null) {
+			Activity activity = getActivity();
+			if (activity != null) {
+				DialogFragment dialogFragment = ReplyDialog.getInstance(tweetToReply);
+				dialogFragment.show(getActivity().getFragmentManager().beginTransaction(), ReplyDialog.TAG);
+				return true;
+			}
+		}
+		return false;
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -162,12 +168,18 @@ public class ConnectedUserTimelineFragment extends TimelineFragment<Tweet> {
 	}
 
 	private void postTweet() {
-		DialogFragment dialog = PostTweetDialog.newInstance(currentAdapter);
-		dialog.show(mainActivity.getFragmentManager().beginTransaction(), PostTweetDialog.TAG);
+		Activity activity = getActivity();
+		if (activity != null) {
+			DialogFragment dialog = PostTweetDialog.newInstance(currentAdapter);
+			dialog.show(activity.getFragmentManager().beginTransaction(), PostTweetDialog.TAG);
+		}
 	}
 
 	private void deleteTweet() {
-		DialogFragment dialog = DeleteTweetDialog.getInstance(currentAdapter, getSelectedItem());
-		dialog.show(mainActivity.getFragmentManager().beginTransaction(), DeleteTweetDialog.TAG);
+		Activity activity = getActivity();
+		if (activity != null) {
+			DialogFragment dialog = DeleteTweetDialog.getInstance(currentAdapter, getSelectedItem());
+			dialog.show(activity.getFragmentManager().beginTransaction(), DeleteTweetDialog.TAG);
+		}
 	}
 }

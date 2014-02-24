@@ -2,6 +2,7 @@ package com.example.Twitter_Android.Fragments;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.LoaderManager;
 import android.content.Intent;
 import android.content.Loader;
 import android.os.Bundle;
@@ -25,7 +26,6 @@ import com.example.Twitter_Android.R;
 import java.util.List;
 
 public class FollowingsFragment extends TimelineFragment<Person> {
-	private Activity mainActivity;
 	private final Connector connector;
 	private TimelineAdapter<Person> currentAdapter;
 	private static final FollowingsFragment instance;
@@ -54,7 +54,6 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		mainActivity = activity;
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -65,7 +64,10 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 		if (currentAdapter == null) {
 			currentAdapter = (FollowingsListAdapter) DataCache.getInstance().getAdapter(ADAPTER_TAG);
 			if (currentAdapter == null) {
-				mainActivity.getLoaderManager().initLoader(FOLLOWINGS_LOADER, null, this);
+				LoaderManager loaderManager = getLoaderManager();
+				if (loaderManager != null) {
+					loaderManager.initLoader(FOLLOWINGS_LOADER, null, this);
+				}
 			} else {
 				setListAdapter(currentAdapter);
 			}
@@ -76,7 +78,10 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 
 	@Override
 	protected void loadOldItems() {
-		mainActivity.getLoaderManager().restartLoader(FOLLOWINGS_LOADER, null, this);
+		LoaderManager loaderManager = getLoaderManager();
+		if (loaderManager != null) {
+			loaderManager.restartLoader(FOLLOWINGS_LOADER, null, this);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -84,7 +89,7 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 		Person person = currentAdapter.getItem(position);
-		Intent intent = new Intent(mainActivity, ConcreteUserTimelineActivity.class);
+		Intent intent = new Intent(getActivity(), ConcreteUserTimelineActivity.class);
 		intent.putExtra("PERSON_ID", person.getID());
 		DataCache.getInstance().putPerson(person.getID(), person);
 		startActivity(intent);
@@ -105,7 +110,7 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 	public void onLoadFinished(Loader<List<? extends Person>> loader, List<? extends Person> data) {
 		if (loader.getId() == FOLLOWINGS_LOADER) {
 			if (currentAdapter == null) {
-				currentAdapter = new FollowingsListAdapter(mainActivity, data, ADAPTER_TAG);
+				currentAdapter = new FollowingsListAdapter(getActivity(), data, ADAPTER_TAG);
 				setListAdapter(currentAdapter);
 				DataCache.getInstance().saveAdapter(FollowingsListAdapter.TAG, currentAdapter);
 			} else {
@@ -139,17 +144,9 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 			case R.id.menu_item_unfollow:
 				unfollow();
 				return true;
-
 		}
 		return super.onOptionsItemSelected(item);
 	}
-
-	private void sendDirectMessage() {
-		Person selectedPerson = getSelectedItem();
-		DialogFragment dialog = DirectMessageDialog.getInstance(selectedPerson);
-		dialog.show(mainActivity.getFragmentManager().beginTransaction(), DirectMessageDialog.TAG);
-	}
-
 	//------------------------------------------------------------------------------------------------------------------
 	/*
 	    Отписаться от выбранного друга (followings).
@@ -162,5 +159,4 @@ public class FollowingsFragment extends TimelineFragment<Person> {
 		TaskUnfollow task = new TaskUnfollow();
 		task.execute(idToDelete);
 	}
-
 }

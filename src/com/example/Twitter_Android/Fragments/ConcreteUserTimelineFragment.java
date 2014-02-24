@@ -2,6 +2,7 @@ package com.example.Twitter_Android.Fragments;
 
 import android.app.Activity;
 import android.app.DialogFragment;
+import android.app.LoaderManager;
 import android.content.Loader;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -9,12 +10,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ImageView;
 import com.example.Twitter_Android.AsynkTasks.ImageDownloader;
+import com.example.Twitter_Android.Fragments.Adapters.ConcreteUserTimelineAdapter;
+import com.example.Twitter_Android.Fragments.Adapters.TimelineAdapter;
 import com.example.Twitter_Android.Fragments.Dialogs.UserInfoDialog;
 import com.example.Twitter_Android.Loaders.UserTimelineLoader;
 import com.example.Twitter_Android.Logic.Constants;
 import com.example.Twitter_Android.Logic.DataCache;
-import com.example.Twitter_Android.Fragments.Adapters.TimelineAdapter;
-import com.example.Twitter_Android.Fragments.Adapters.ConcreteUserTimelineAdapter;
 import com.example.Twitter_Android.Logic.Person;
 import com.example.Twitter_Android.Logic.Tweet;
 import com.example.Twitter_Android.R;
@@ -22,7 +23,6 @@ import com.example.Twitter_Android.R;
 import java.util.List;
 
 public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
-	private Activity mainActivity;
 	private TimelineAdapter<Tweet> currentAdapter;
 	private static final String TAG_UID = "VALUE_USER_ID";
 	private static final String MAX_ID = "VALUE_MAX_ID";
@@ -53,7 +53,6 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		mainActivity = activity;
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -61,9 +60,11 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		Bundle args = getArguments();
-
+		LoaderManager loaderManager = getLoaderManager();
 		if (args != null) {
-			mainActivity.getLoaderManager().restartLoader(FIRST_TIME_LOADER, args, this);
+			if (loaderManager != null) {
+				loaderManager.restartLoader(FIRST_TIME_LOADER, args, this);
+			}
 		}
 
 		if (currentAdapter == null) {
@@ -75,9 +76,11 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 			currentAdapter = (ConcreteUserTimelineAdapter) cache.getAdapter(ADAPTER_TAG);
 			if (currentAdapter != null) {
 				setListAdapter(currentAdapter);
-				currentAdapter.updateContext(mainActivity);
+				currentAdapter.updateContext(getActivity());
 			} else {
-				mainActivity.getLoaderManager().initLoader(FIRST_TIME_LOADER, null, this);
+				if (loaderManager != null) {
+					loaderManager.initLoader(FIRST_TIME_LOADER, null, this);
+				}
 			}
 		} else {
 			/*
@@ -86,7 +89,7 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 				Иначе возникает ошибка вида "java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState",
 				когда диалог пытается отобразиться в сохраненной (а не в текущей) активити.
 			 */
-			currentAdapter.updateContext(mainActivity);
+			currentAdapter.updateContext(getActivity());
 		}
 	}
 
@@ -98,7 +101,10 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 		long uid = currentPerson.getID();
 		args.putLong(MAX_ID, maxID);
 		args.putLong(TAG_UID, uid);
-		mainActivity.getLoaderManager().restartLoader(OLD_TWEETS_LOADER, args, this);
+		LoaderManager loaderManager = getLoaderManager();
+		if (loaderManager != null) {
+			loaderManager.restartLoader(OLD_TWEETS_LOADER, args, this);
+		}
 	}
 
 	@Override
@@ -108,7 +114,10 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 		long uid = currentPerson.getID();
 		args.putLong(SINCE_ID, sinceID);
 		args.putLong(TAG_UID, uid);
-		mainActivity.getLoaderManager().restartLoader(NEWEST_TWEETS_LOADER, args, this);
+		LoaderManager loaderManager = getLoaderManager();
+		if (loaderManager != null) {
+			loaderManager.restartLoader(NEWEST_TWEETS_LOADER, args, this);
+		}
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -123,7 +132,7 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 		long uid = args.getLong(TAG_UID, 0);
 		long maxID = args.getLong(MAX_ID, 0);
 		long sinceID = args.getLong(SINCE_ID, 0);
-		return new UserTimelineLoader(mainActivity, uid, maxID, sinceID);
+		return new UserTimelineLoader(getActivity(), uid, maxID, sinceID);
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -131,7 +140,7 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 	public void onLoadFinished(Loader<List<? extends Tweet>> loader, List<? extends Tweet> data) {
 		if (data.size() > 0) {
 			if (currentAdapter == null) {
-				currentAdapter = new ConcreteUserTimelineAdapter(mainActivity, data, ADAPTER_TAG);
+				currentAdapter = new ConcreteUserTimelineAdapter(getActivity(), data, ADAPTER_TAG);
 				setListAdapter(currentAdapter);
 			} else {
 				switch (loader.getId()) {
@@ -148,7 +157,10 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 						break;
 				}
 			}
-			mainActivity.setTitle(currentPerson.getName());
+			Activity activity = getActivity();
+			if (activity != null) {
+				activity.setTitle(currentPerson.getName());
+			}
 		}
 		isLoading = false;
 	}
@@ -162,14 +174,21 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 
 	@Override
 	public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-		currentPerson = getItem(position).getAuthor();
-		imageDownloader.loadBitmap(currentPerson.getProfileImage(), avatar);
-		final long selectedUserId = currentPerson.getID();
-		Bundle args = new Bundle();
-		args.putLong(TAG_UID, selectedUserId);
-		mainActivity.setTitle("Loading: " + currentPerson.getName());
-		mainActivity.getLoaderManager().restartLoader(FIRST_TIME_LOADER, args, this);
-		return true;
+		Activity activity = getActivity();
+		if (activity != null) {
+			currentPerson = getItem(position).getAuthor();
+			imageDownloader.loadBitmap(currentPerson.getProfileImage(), avatar);
+			final long selectedUserId = currentPerson.getID();
+			Bundle args = new Bundle();
+			args.putLong(TAG_UID, selectedUserId);
+			activity.setTitle("Loading: " + currentPerson.getName());
+			LoaderManager loaderManager = getLoaderManager();
+			if (loaderManager != null) {
+				getLoaderManager().restartLoader(FIRST_TIME_LOADER, args, this);
+			}
+			return true;
+		}
+		return false;
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -183,12 +202,16 @@ public class ConcreteUserTimelineFragment extends TimelineFragment<Tweet> {
 		}
 		return super.onOptionsItemSelected(item);
 	}
+
 	private void showInfo() {
 		final Tweet tweet = getSelectedItem();
 		if (tweet != null) {
-			Person person = tweet.getAuthor();
-			final DialogFragment dialog = UserInfoDialog.newInstance(person);
-			dialog.show(mainActivity.getFragmentManager().beginTransaction(), UserInfoDialog.TAG);
+			Activity activity = getActivity();
+			if (activity != null) {
+				Person person = tweet.getAuthor();
+				final DialogFragment dialog = UserInfoDialog.newInstance(person);
+				dialog.show(activity.getFragmentManager().beginTransaction(), UserInfoDialog.TAG);
+			}
 		}
 	}
 }

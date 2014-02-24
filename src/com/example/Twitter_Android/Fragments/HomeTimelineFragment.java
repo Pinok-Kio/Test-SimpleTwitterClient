@@ -1,9 +1,6 @@
 package com.example.Twitter_Android.Fragments;
 
-import android.app.Activity;
-import android.app.DialogFragment;
-import android.app.SearchManager;
-import android.app.SearchableInfo;
+import android.app.*;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -26,14 +23,11 @@ import com.example.Twitter_Android.Logic.Constants;
 import com.example.Twitter_Android.Logic.DataCache;
 import com.example.Twitter_Android.Logic.Person;
 import com.example.Twitter_Android.Logic.Tweet;
-import com.example.Twitter_Android.Net.Connector;
 import com.example.Twitter_Android.R;
 
 import java.util.List;
 
 public class HomeTimelineFragment extends TimelineFragment<Tweet> {
-	private Activity mainActivity;
-	private final Connector connector;
 	private TimelineAdapter<Tweet> currentAdapter;
 	private static final String MAX_ID = "MAX_ID";
 	private static final String SINCE_ID = "SINCE_ID";
@@ -47,13 +41,12 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 
 	static {
 		instance = new HomeTimelineFragment();
-		instance.setRetainInstance(true);
 		instance.setHasOptionsMenu(true);
+		instance.setRetainInstance(true);
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
 	private HomeTimelineFragment() {
-		connector = new Connector();
 	}
 
 	public static HomeTimelineFragment newInstance() {
@@ -63,10 +56,10 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
-		mainActivity = activity;
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
+
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
@@ -79,10 +72,13 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 			 */
 			currentAdapter = (TweetAdapter) cache.getAdapter(ADAPTER_TAG);
 			if (currentAdapter == null) {
-				mainActivity.getLoaderManager().initLoader(OLD_TWEETS_LOADER, null, this);
+				LoaderManager loaderManager = getLoaderManager();
+				if (loaderManager != null) {
+					loaderManager.initLoader(OLD_TWEETS_LOADER, null, this);
+				}
 			} else {
 				setListAdapter(currentAdapter);
-				currentAdapter.updateContext(mainActivity);
+				currentAdapter.updateContext(getActivity());
 			}
 		} else {
 			/*
@@ -91,7 +87,7 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 				Иначе возникает ошибка вида "java.lang.IllegalStateException: Can not perform this action after onSaveInstanceState",
 				когда диалог пытается отобразиться в сохраненной (а не в текущей) активити.
 			 */
-			currentAdapter.updateContext(mainActivity);
+			currentAdapter.updateContext(getActivity());
 		}
 	}
 
@@ -112,7 +108,10 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 		Bundle args = new Bundle();
 		long maxID = getMaxId();
 		args.putLong(MAX_ID, maxID);
-		mainActivity.getLoaderManager().restartLoader(OLD_TWEETS_LOADER, args, this);
+		LoaderManager loaderManager = getLoaderManager();
+		if (loaderManager != null) {
+			loaderManager.restartLoader(OLD_TWEETS_LOADER, args, this);
+		}
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
@@ -121,10 +120,14 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 	 * Происходит, когда пользователь листает твиты в начало, не чаще одного раза в NEWEST_TWEET_LOAD_PERIOD мс.
 	 */
 	protected void loadNewestItems() {
+		System.out.println("LOAD NEWEST");
 		Bundle args = new Bundle();
 		long sinceID = getSinceID();
 		args.putLong(SINCE_ID, sinceID);
-		mainActivity.getLoaderManager().restartLoader(NEWEST_TWEETS_LOADER_ID, args, this);
+		LoaderManager loaderManager = getLoaderManager();
+		if (loaderManager != null) {
+			loaderManager.restartLoader(NEWEST_TWEETS_LOADER_ID, args, this);
+		}
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -140,14 +143,15 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 				if (args != null) {
 					tweetMaxValue = args.getLong(MAX_ID, 0);
 				}
-				return new HomeTimelineLoader(mainActivity, tweetMaxValue, 0);
+				System.out.println("onCreateLoader maxID=" + tweetMaxValue);
+				return new HomeTimelineLoader(getActivity(), tweetMaxValue, 0);
 
 			case NEWEST_TWEETS_LOADER_ID:
 				long sinceIdValue = 0;
 				if (args != null) {
 					sinceIdValue = args.getLong(SINCE_ID, 0);
 				}
-				return new HomeTimelineLoader(mainActivity, 0, sinceIdValue);
+				return new HomeTimelineLoader(getActivity(), 0, sinceIdValue);
 		}
 		return null;
 	}
@@ -158,7 +162,7 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 			switch (loader.getId()) {
 				case OLD_TWEETS_LOADER:   //Загружаем старые твиты.
 					if (currentAdapter == null) {
-						currentAdapter = new TweetAdapter(mainActivity, data, ADAPTER_TAG);
+						currentAdapter = new TweetAdapter(getActivity(), data, ADAPTER_TAG);
 						setListAdapter(currentAdapter);
 					} else {
 						currentAdapter.addItemsToBottom(data);
@@ -200,10 +204,13 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 			return;
 		}
 
-		SearchManager searchManager = (SearchManager) mainActivity.getSystemService(Context.SEARCH_SERVICE);
-		ComponentName cn = new ComponentName(mainActivity, SearchableActivity.class);
-		SearchableInfo info = searchManager.getSearchableInfo(cn);
-		searchView.setSearchableInfo(info);
+		Activity activity = getActivity();
+		if (activity != null) {
+			SearchManager searchManager = (SearchManager) activity.getSystemService(Context.SEARCH_SERVICE);
+			ComponentName cn = new ComponentName(activity, SearchableActivity.class);
+			SearchableInfo info = searchManager.getSearchableInfo(cn);
+			searchView.setSearchableInfo(info);
+		}
 	}
 
 	@Override
@@ -219,9 +226,12 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 	private void showInfo() {
 		final Tweet tweet = getSelectedItem();
 		if (tweet != null) {
-			Person person = tweet.getAuthor();
-			final DialogFragment dialog = UserInfoDialog.newInstance(person);
-			dialog.show(mainActivity.getFragmentManager().beginTransaction(), UserInfoDialog.TAG);
+			Activity activity = getActivity();
+			if (activity != null) {
+				Person person = tweet.getAuthor();
+				final DialogFragment dialog = UserInfoDialog.newInstance(person);
+				dialog.show(activity.getFragmentManager().beginTransaction(), UserInfoDialog.TAG);
+			}
 		}
 	}
 }

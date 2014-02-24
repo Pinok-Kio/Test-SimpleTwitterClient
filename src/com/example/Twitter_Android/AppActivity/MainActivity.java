@@ -164,11 +164,9 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	private void startDataLoading() {
 		Configuration configuration = getResources().getConfiguration();
 		screenSize = configuration.screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK;
-
 		if (isLandscapeOrientation() && screenSize != Configuration.SCREENLAYOUT_SIZE_NORMAL) {
 			showHomeTimeline();
 		}
-
 		setTabs();
 	}
 
@@ -235,7 +233,6 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 		TODO: возможно переделать на AsyncTask.
 	 */
 	private void savePersonToDB(final Person person) {
-		System.out.println("savePersonToDB");
 		Executors.newCachedThreadPool().execute(new Runnable() {
 			@Override
 			public void run() {
@@ -323,7 +320,7 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 
 	void showFragment(Fragment fragment, String tag) {
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		ft.setCustomAnimations(R.animator.aminator_appearance, R.animator.animator_disappear);
+		ft.setCustomAnimations(R.animator.animator_appearance, R.animator.animator_disappear);
 
 		//Основной фрагмент показываем всегда, дополнительный - в нужном месте.
 		if (tag.equals(HomeTimelineFragment.TAG)) {

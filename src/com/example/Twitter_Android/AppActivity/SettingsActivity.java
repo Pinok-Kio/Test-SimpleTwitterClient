@@ -15,7 +15,7 @@ public class SettingsActivity extends Activity {
 
 		getFragmentManager()
 				.beginTransaction()
-				.setCustomAnimations(R.animator.aminator_appearance, R.animator.animator_disappear)
+				.setCustomAnimations(R.animator.animator_appearance, R.animator.animator_disappear)
 				.replace(android.R.id.content, new SettingsFragment()).commit();
 	}
 }

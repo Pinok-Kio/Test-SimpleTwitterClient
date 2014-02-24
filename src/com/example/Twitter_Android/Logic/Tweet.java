@@ -9,10 +9,11 @@ public class Tweet {
 	private final String[] hashtags;
 	private final Person author;
 	private final String mediaUrl;
-	private final long ID;
+	private final long originalID;
 	private final boolean hasMedia;
 	private final boolean hasLinkInText;
 	private Person retweetedBy;
+	private long afterRetweetID;
 
 	public Tweet(String text, String creationDate, String lang, String[] hashtags, Person person, String[] mediaUrl, long ID) {
 		this.text = text;
@@ -21,7 +22,7 @@ public class Tweet {
 		this.hashtags = hashtags;
 		this.author = person;
 		this.mediaUrl = (mediaUrl != null) ? mediaUrl[0] : null;
-		this.ID = ID;
+		this.originalID = ID;
 		hasMedia = (mediaUrl != null);
 		hasLinkInText = (text.contains("http"));
 	}
@@ -54,8 +55,8 @@ public class Tweet {
 		return mediaUrl;
 	}
 
-	public long getID() {
-		return ID;
+	public long getOriginalID() {
+		return originalID;
 	}
 
 	public boolean hasLinkInText() {
@@ -74,6 +75,18 @@ public class Tweet {
 		retweetedBy = person;
 	}
 
+	public long getIdAfterRetweet() {
+		return afterRetweetID;
+	}
+
+	public void setIdAfterRetweet(long afterRetweetID) {
+		this.afterRetweetID = afterRetweetID;
+	}
+
+	public long getID() {
+		return (afterRetweetID != 0) ? afterRetweetID : originalID;
+	}
+
 	@Override
 	public String toString() {
 		String line = "----------------------------------------------------------------------";
@@ -87,7 +100,7 @@ public class Tweet {
 
 		Tweet tweet = (Tweet) o;
 
-		return ID == tweet.ID
+		return originalID == tweet.originalID
 				&& hasLinkInText == tweet.hasLinkInText
 				&& hasMedia == tweet.hasMedia
 				&& !(creationDate != null ? !creationDate.equals(tweet.creationDate) : tweet.creationDate != null)
@@ -106,7 +119,7 @@ public class Tweet {
 		result = 31 * result + (hashtags != null ? Arrays.hashCode(hashtags) : 0);
 		result = 31 * result + author.hashCode();
 		result = 31 * result + (mediaUrl != null ? mediaUrl.hashCode() : 0);
-		result = 31 * result + (int) (ID ^ (ID >>> 32));
+		result = 31 * result + (int) (originalID ^ (originalID >>> 32));
 		result = 31 * result + (hasMedia ? 1 : 0);
 		result = 31 * result + (hasLinkInText ? 1 : 0);
 		return result;

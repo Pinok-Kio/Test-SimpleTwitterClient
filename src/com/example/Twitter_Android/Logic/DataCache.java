@@ -15,7 +15,7 @@ public final class DataCache {
 	private static final Map<String, BaseAdapter> adapters = new ConcurrentHashMap<>();
 	private static final DataCache instance = new DataCache();
 	private long bitmapCacheSize;
-	private static final int MAX_CACHE_SIZE = 16 * 1024 * 1024; //16 Mb
+	private static final int MAX_CACHE_SIZE = 16 * 1024 * 1024;
 	private int maxBitmapDimension = 500;
 	private long connectedUserID;
 
