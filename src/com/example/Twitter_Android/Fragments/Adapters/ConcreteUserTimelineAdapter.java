@@ -40,7 +40,7 @@ public class ConcreteUserTimelineAdapter extends TimelineAdapter<Tweet> {
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
-	public ConcreteUserTimelineAdapter(Activity activity, List<? extends Tweet> newTweets, String tag) {
+	public ConcreteUserTimelineAdapter(Activity activity, List<Tweet> newTweets, String tag) {
 		super(newTweets, tag);
 		mainActivity = activity;
 		layoutInflater = LayoutInflater.from(mainActivity);

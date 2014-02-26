@@ -20,8 +20,8 @@ public class FollowersLoader extends TweetLoader<Person> {
 	}
 
 	@Override
-	public List<? extends Person> loadInBackground() {
-		List<? extends Person> followers = new ArrayList<>();
+	public List<Person> loadInBackground() {
+		List<Person> followers = new ArrayList<>();
 
 		try {
 			followers = connector.getFollowers(DataCache.getInstance().getConnectedUserID(), cursor);

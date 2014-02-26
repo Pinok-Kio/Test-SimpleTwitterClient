@@ -1,6 +1,5 @@
 package com.example.Twitter_Android.Net;
 
-import com.example.Twitter_Android.Logic.Message;
 import com.example.Twitter_Android.Logic.Person;
 import com.example.Twitter_Android.Logic.Tweet;
 import org.json.simple.JSONArray;
@@ -248,15 +247,15 @@ class Parser {
 		return (boolean) targetFriend.get("followed_by");
 	}
 
-	public List<Message> getMessages(String str) throws ParseException, java.text.ParseException {
+	public List<Tweet> getMessages(String str) throws ParseException, java.text.ParseException {
 		JSONArray jsonArray = (JSONArray) parser.parse(str);
-		List<Message> result = new ArrayList<>();
+		List<Tweet> result = new ArrayList<>();
 		for (JSONObject arrayValue : (Iterable<JSONObject>) jsonArray) {
 			long messageId = (long) arrayValue.get("id");
 			String text = (String) arrayValue.get("text");
 			String time = getCreationDate(arrayValue);
 			Person sender = getPerson((JSONObject) arrayValue.get("sender"));
-			Message message = new Message(messageId, text, time, sender);
+			Tweet message = new Tweet(text, time, "", null, sender, null, messageId);
 			result.add(message);
 		}
 		return result;

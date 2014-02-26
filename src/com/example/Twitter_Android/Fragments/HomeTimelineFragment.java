@@ -132,7 +132,7 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 
 	//------------------------------------------------------------------------------------------------------------------
 	@Override
-	public Loader<List<? extends Tweet>> onCreateLoader(int id, Bundle args) {
+	public Loader<List<Tweet>> onCreateLoader(int id, Bundle args) {
 		switch (id) {
 			case OLD_TWEETS_LOADER:
 				/*
@@ -157,7 +157,7 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<? extends Tweet>> loader, List<? extends Tweet> data) {
+	public void onLoadFinished(Loader<List<Tweet>> loader, List<Tweet> data) {
 		if (data.size() > 0) {
 			switch (loader.getId()) {
 				case OLD_TWEETS_LOADER:   //Загружаем старые твиты.
@@ -188,7 +188,7 @@ public class HomeTimelineFragment extends TimelineFragment<Tweet> {
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<? extends Tweet>> loader) {
+	public void onLoaderReset(Loader<List<Tweet>> loader) {
 		currentAdapter = null;
 		setListAdapter(null);
 	}

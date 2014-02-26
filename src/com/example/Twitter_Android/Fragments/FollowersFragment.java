@@ -98,7 +98,7 @@ public class FollowersFragment extends TimelineFragment<Person> {
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public Loader<List<? extends Person>> onCreateLoader(int id, Bundle args) {
+	public Loader<List<Person>> onCreateLoader(int id, Bundle args) {
 		if (id == FOLLOWERS_LOADER) {
 			return new FollowersLoader(getActivity(), connector, nextCursor);
 		}
@@ -106,7 +106,7 @@ public class FollowersFragment extends TimelineFragment<Person> {
 	}
 
 	@Override
-	public void onLoadFinished(Loader<List<? extends Person>> loader, List<? extends Person> data) {
+	public void onLoadFinished(Loader<List<Person>> loader, List<Person> data) {
 		if (loader.getId() == FOLLOWERS_LOADER) {
 			if (currentAdapter == null) {
 				currentAdapter = new FollowingsListAdapter(getActivity(), data, ADAPTER_TAG);
@@ -125,7 +125,7 @@ public class FollowersFragment extends TimelineFragment<Person> {
 	}
 
 	@Override
-	public void onLoaderReset(Loader<List<? extends Person>> loader) {
+	public void onLoaderReset(Loader<List<Person>> loader) {
 //		setListAdapter(null);
 	}
 	//------------------------------------------------------------------------------------------------------------------

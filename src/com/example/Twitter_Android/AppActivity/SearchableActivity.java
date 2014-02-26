@@ -91,18 +91,18 @@ public class SearchableActivity extends ListActivity implements LoaderManager.Lo
 	public void onLoadFinished(Loader loader, Object data) {
 		if (loader.getId() == TWEETS_LOADER) {
 			if (tweetAdapter == null) {
-				tweetAdapter = new TweetAdapter(this, (List<? extends Tweet>) data, ADAPTER_TAG);
+				tweetAdapter = new TweetAdapter(this, (List<Tweet>) data, ADAPTER_TAG);
 				setListAdapter(tweetAdapter);
 			} else {
-				tweetAdapter.addItemsInstead((List<? extends Tweet>) data);
+				tweetAdapter.addItemsInstead((List<Tweet>) data);
 			}
 			followingsAdapter = null;
 		} else if (loader.getId() == USERS_LOADER) {
 			if (followingsAdapter == null) {
-				followingsAdapter = new FollowingsListAdapter(this, (List<? extends Person>) data, ADAPTER_TAG);
+				followingsAdapter = new FollowingsListAdapter(this, (List<Person>) data, ADAPTER_TAG);
 				setListAdapter(followingsAdapter);
 			} else {
-				followingsAdapter.addItemsInstead((List<? extends Person>) data);
+				followingsAdapter.addItemsInstead((List<Person>) data);
 			}
 			tweetAdapter = null;
 		}

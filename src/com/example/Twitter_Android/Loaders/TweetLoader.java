@@ -7,9 +7,9 @@ import com.example.Twitter_Android.AppActivity.SettingsActivity;
 
 import java.util.List;
 
-abstract class TweetLoader<T> extends AsyncTaskLoader<List<? extends T>> {
+abstract class TweetLoader<T> extends AsyncTaskLoader<List<T>> {
 	protected final int RESULT_COUNT;
-	private List<? extends T> loadedTweets;
+	private List<T> loadedTweets;
 	private static final String DEFAULT_TWEET_COUNT = "50";
 
 	//------------------------------------------------------------------------------------------------------------------
@@ -21,12 +21,12 @@ abstract class TweetLoader<T> extends AsyncTaskLoader<List<? extends T>> {
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public void deliverResult(List<? extends T> data) {
+	public void deliverResult(List<T> data) {
 		if (isReset()) {
 			releaseResources(data);
 			return;
 		}
-		List<? extends T> oldData = loadedTweets;
+		List<T> oldData = loadedTweets;
 		loadedTweets = data;
 
 		if (isStarted()) {
@@ -38,7 +38,7 @@ abstract class TweetLoader<T> extends AsyncTaskLoader<List<? extends T>> {
 		}
 	}
 
-	void setLoadedTweets(List<? extends T> loadedData) {
+	void setLoadedTweets(List<T> loadedData) {
 		loadedTweets = loadedData;
 	}
 	//------------------------------------------------------------------------------------------------------------------
@@ -75,17 +75,17 @@ abstract class TweetLoader<T> extends AsyncTaskLoader<List<? extends T>> {
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public void onCanceled(List<? extends T> data) {
+	public void onCanceled(List<T> data) {
 		super.onCanceled(data);
 		releaseResources(data);
 	}
 	//------------------------------------------------------------------------------------------------------------------
 
 	@Override
-	public abstract List<? extends T> loadInBackground();
+	public abstract List<T> loadInBackground();
 	//------------------------------------------------------------------------------------------------------------------
 
-	private void releaseResources(List<? extends T> data) {
+	private void releaseResources(List<T> data) {
 		if (data != null) {
 			data.clear();
 		}

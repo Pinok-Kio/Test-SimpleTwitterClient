@@ -302,7 +302,8 @@ public class MainActivity extends Activity implements ActionBar.TabListener {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		switch (item.getItemId()) {
 			case R.id.menu_item_messages:
-				Toast.makeText(this, "NEED TO CREATE MESSAGE DIALOG/ACTIVITY", Toast.LENGTH_LONG).show();
+				Intent intentMessages = new Intent(this, MessagesActivity.class);
+				startActivity(intentMessages);
 				return true;
 
 			case R.id.menu_settings:

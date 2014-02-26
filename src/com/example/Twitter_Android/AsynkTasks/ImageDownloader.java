@@ -179,7 +179,6 @@ public class ImageDownloader {
 		Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
 		int bitmapWidth = bitmap.getWidth();
 		int bitmapHeight = bitmap.getHeight();
-//		System.out.println("bitmapWidth = " + bitmapWidth + "   bitmapHeight = " + bitmapHeight);
 		final int MAX_DIMENSION = cache.getScreenWidth();
 
 		if (bitmapHeight > MAX_DIMENSION) {

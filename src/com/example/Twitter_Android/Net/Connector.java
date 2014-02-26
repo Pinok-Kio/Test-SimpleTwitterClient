@@ -1,7 +1,6 @@
 package com.example.Twitter_Android.Net;
 
 import android.net.Uri;
-import com.example.Twitter_Android.Logic.Message;
 import com.example.Twitter_Android.Logic.Person;
 import com.example.Twitter_Android.Logic.Tweet;
 import org.json.simple.parser.ParseException;
@@ -285,7 +284,7 @@ public class Connector {
 		return response.isSuccessful();
 	}
 
-	public List<Message> getReceivedMessages(long max_id, long since_id, int count) throws ParseException, java.text.ParseException {
+	public List<Tweet> getReceivedMessages(long max_id, long since_id, int count) throws ParseException, java.text.ParseException {
 		String address = "https://api.twitter.com/1.1/direct_messages.json?include_entities=false&skip_status=true&count=" + count;
 		if (since_id > 0) {
 			address += "&since_id=" + since_id;

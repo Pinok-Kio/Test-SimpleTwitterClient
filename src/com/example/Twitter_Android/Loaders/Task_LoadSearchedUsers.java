@@ -17,10 +17,10 @@ public class Task_LoadSearchedUsers extends TweetLoader<Person> {
 	}
 
 	@Override
-	public List<? extends Person> loadInBackground() {
+	public List<Person> loadInBackground() {
 		final Connector connector = new Connector();
 
-		List<? extends Person> loadedTweets = new ArrayList<>();
+		List<Person> loadedTweets = new ArrayList<>();
 		try {
 			loadedTweets = connector.findUsers(toFind, RESULT_COUNT);
 		} catch (ParseException e) {

@@ -15,7 +15,7 @@ import com.example.Twitter_Android.Fragments.Adapters.TimelineAdapter;
 
 import java.util.List;
 
-public abstract class TimelineFragment<T> extends ListFragment implements LoaderManager.LoaderCallbacks<List<? extends T>>,
+public abstract class TimelineFragment<T> extends ListFragment implements LoaderManager.LoaderCallbacks<List<T>>,
 		AdapterView.OnItemLongClickListener {
 
 	private TimelineAdapter<T> currentAdapter;
@@ -172,13 +172,13 @@ public abstract class TimelineFragment<T> extends ListFragment implements Loader
 	}
 	//------------------------------------------------------------------------------------------------------------------
 	@Override
-	public abstract Loader<List<? extends T>> onCreateLoader(int id, Bundle args);
+	public abstract Loader<List<T>> onCreateLoader(int id, Bundle args);
 
 	@Override
-	public abstract void onLoadFinished(Loader<List<? extends T>> loader, List<? extends T> data);
+	public abstract void onLoadFinished(Loader<List<T>> loader, List<T> data);
 
 	@Override
-	public abstract void onLoaderReset(Loader<List<? extends T>> loader);
+	public abstract void onLoaderReset(Loader<List<T>> loader);
 
 	//------------------------------------------------------------------------------------------------------------------
 	@Override

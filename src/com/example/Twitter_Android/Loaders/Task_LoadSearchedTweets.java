@@ -19,9 +19,9 @@ public class Task_LoadSearchedTweets extends TweetLoader<Tweet> {
 	}
 
 	@Override
-	public List<? extends Tweet> loadInBackground() {
+	public List<Tweet> loadInBackground() {
 		final Connector connector = new Connector();
-		List<? extends Tweet> loadedTweets = new ArrayList<>();
+		List<Tweet> loadedTweets = new ArrayList<>();
 		try {
 			loadedTweets = connector.findTweets(toFind, RESULT_COUNT);
 		} catch (ParseException e) {

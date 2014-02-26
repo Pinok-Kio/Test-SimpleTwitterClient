@@ -22,8 +22,8 @@ public class FollowingsLoader extends TweetLoader<Person> {
 
 	//------------------------------------------------------------------------------------------------------------------
 	@Override
-	public List<? extends Person> loadInBackground() {
-		List<? extends Person> followings = new ArrayList<>();
+	public List<Person> loadInBackground() {
+		List<Person> followings = new ArrayList<>();
 		try {
 			followings = connector.getFriends(DataCache.getInstance().getConnectedUserID(), cursor);
 		} catch (ParseException e) {

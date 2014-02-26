@@ -1,6 +1,9 @@
 package com.example.Twitter_Android.Logic;
 
-public class Person implements Comparable<Person> {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class Person implements Comparable<Person>, Parcelable {
 	private final String name;
 	private final String screenName;
 	private final String profileImage;
@@ -8,6 +11,29 @@ public class Person implements Comparable<Person> {
 	private final String description;
 	private boolean isFriend;
 	private final long ID;
+
+	public static final Parcelable.Creator<Person> CREATOR = new Parcelable.Creator<Person>() {
+		@Override
+		public Person createFromParcel(Parcel source) {
+			return new Person(source);
+		}
+
+		public Person[] newArray(int size) {
+			return new Person[size];
+		}
+	};
+
+	private Person(Parcel source) {
+		name = source.readString();
+		screenName = source.readString();
+		profileImage = source.readString();
+		location = source.readString();
+		description = source.readString();
+		boolean[] array = new boolean[1];
+		source.readBooleanArray(array);
+		isFriend = array[0];
+		ID = source.readLong();
+	}
 
 	//------------------------------------------------------------------------------------------------------------------
 	public Person(String name, String screenName, String profileImage, String location, String description, boolean isFriend, long ID) {
@@ -97,5 +123,21 @@ public class Person implements Comparable<Person> {
 
 	public void changeFriendshipRelations() {
 		isFriend = !isFriend;
+	}
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(name);
+		dest.writeString(screenName);
+		dest.writeString(profileImage);
+		dest.writeString(location);
+		dest.writeString(description);
+		dest.writeBooleanArray(new boolean[]{isFriend});
+		dest.writeLong(ID);
 	}
 }

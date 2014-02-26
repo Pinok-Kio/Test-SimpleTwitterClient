@@ -44,7 +44,7 @@ public class TweetAdapter extends TimelineAdapter<Tweet> {
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
-	public TweetAdapter(Activity activity, List<? extends Tweet> newTweets, String tag) {
+	public TweetAdapter(Activity activity, List<Tweet> newTweets, String tag) {
 		super(newTweets, tag);
 		layoutInflater = LayoutInflater.from(activity);
 		mainActivity = activity;

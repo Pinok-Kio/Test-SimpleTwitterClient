@@ -179,22 +179,6 @@ public class CMassive<T> {
 		}
 	}
 
-//	public void show() {
-//		System.out.println("SHOW START=" + start + " END=" + end + " FULLSIZE=" + fullSize + " DATASIZE=" + dataSize + " AVAILABLESIZE=" + availableSize);
-//		if (start >= end) {
-//			for (int i = start; i < massive.length; i++) {
-//				System.out.print(massive[i] + " ");
-//			}
-//			for (int i = 0; i < end; i++) {
-//				System.out.print(massive[i] + " ");
-//			}
-//		} else {
-//			for (int i = 0; i < end; i++) {
-//				System.out.print(massive[i] + " ");
-//			}
-//		}
-//	}
-
 	public int getDataSize() {
 		return dataSize;
 	}

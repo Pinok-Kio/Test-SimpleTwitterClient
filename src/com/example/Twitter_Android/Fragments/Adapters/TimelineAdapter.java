@@ -26,7 +26,6 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 		if (newItems.get(0) instanceof Tweet) {
 			sinceID = ((Tweet) newItems.get(0)).getID();
 			maxID = ((Tweet) newItems.get(newItems.size() - 1)).getID() - 1;
-			System.out.println("CONSTRUCTOR sinceID=" + sinceID + " maxID=" + maxID);
 		}
 	}
 
@@ -71,11 +70,10 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 	@SuppressWarnings("unchecked")
 	public void addItemsToTop(List<? extends T> newItems) {
 		items.insertToStart(newItems);
+		notifyDataSetChanged();
 		if (newItems.get(0) instanceof Tweet) {
 			sinceID = ((Tweet) newItems.get(0)).getID();
 		}
-		System.out.println("addItemsToTop sinceID=" + sinceID + " maxID=" + maxID);
-		notifyDataSetChanged();
 	}
 
 	/**
@@ -86,12 +84,10 @@ public abstract class TimelineAdapter<T> extends BaseAdapter {
 	@SuppressWarnings("unchecked")
 	public void addItemsToBottom(List<? extends T> newItems) {
 		items.insertToEnd(newItems);
+		notifyDataSetChanged();
 		if (newItems.get(0) instanceof Tweet) {
 			maxID = ((Tweet) newItems.get(newItems.size() - 1)).getID() - 1;
 		}
-		System.out.println("addItemsToBottom sinceID=" + sinceID + " maxID=" + maxID + " loadedMaxId=" + (((Tweet) newItems.get(newItems.size() - 1)).getID() - 1) + " loadedSinceId=" + (((Tweet) newItems.get(0)).getID()));
-
-		notifyDataSetChanged();
 	}
 
 	//------------------------------------------------------------------------------------------------------------------
